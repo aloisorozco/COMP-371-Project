@@ -456,10 +456,12 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
 }
 
 
-void drawStadium(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram) 
+void drawStadium(glm::mat4 worldMatrix, int cubeVao, int cubeVaoRepeat, int sceneShaderProgram, int standTextureID, int wallTextureID) 
 {
-    noTexture(sceneShaderProgram);
+    setTexture(sceneShaderProgram, wallTextureID, 0, toggleTexture);
+    //noTexture(sceneShaderProgram);
     setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.239f);
     glBindVertexArray(cubeVao);
 
     // Far wall model matrix
@@ -468,7 +470,6 @@ void drawStadium(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram)
     setWorldMatrix(sceneShaderProgram, farWallModelMatrix);
 
     // Drawing the far wall
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Near wall model matrix
@@ -477,8 +478,60 @@ void drawStadium(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram)
     setWorldMatrix(sceneShaderProgram, nearWallModelMatrix);
 
     // Drawing the near wall
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+    // Right wall model matrix
+    glm::mat4 rightWallModelMatrix = glm::translate(iMat, glm::vec3(85.0f, 13.0f, 0.0f)) * glm::scale(iMat, glm::vec3(10.0f, 29.0f, 120.0f));
+    rightWallModelMatrix = worldMatrix * rightWallModelMatrix;
+    setWorldMatrix(sceneShaderProgram, rightWallModelMatrix);
+
+    // Drawing the right wall
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Left wall model matrix
+    glm::mat4 leftWallModelMatrix = glm::translate(iMat, glm::vec3(-85.0f, 13.0f, 0.0f)) * glm::scale(iMat, glm::vec3(10.0f, 29.0f, 120.0f));
+    leftWallModelMatrix = worldMatrix * leftWallModelMatrix;
+    setWorldMatrix(sceneShaderProgram, leftWallModelMatrix);
+
+    // Drawing the left wall
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Corner 1 model matrix (near right)
+    glm::mat4 corner1ModelMatrix = glm::translate(iMat, glm::vec3(85.0f, 9.0f, 65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
+    corner1ModelMatrix = worldMatrix * corner1ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, corner1ModelMatrix);
+
+    // Drawing the corner 1
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Corner 2 model matrix (near left)
+    glm::mat4 corner2ModelMatrix = glm::translate(iMat, glm::vec3(-85.0f, 9.0f, 65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
+    corner2ModelMatrix = worldMatrix * corner2ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, corner2ModelMatrix);
+
+    // Drawing the corner 2
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Corner 3 model matrix (far right)
+    glm::mat4 corner3ModelMatrix = glm::translate(iMat, glm::vec3(85.0f, 9.0f, -65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
+    corner3ModelMatrix = worldMatrix * corner3ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, corner3ModelMatrix);
+
+    // Drawing the corner 3
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Corner 4 model matrix (far left)
+    glm::mat4 corner4ModelMatrix = glm::translate(iMat, glm::vec3(-85.0f, 9.0f, -65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
+    corner4ModelMatrix = worldMatrix * corner4ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, corner4ModelMatrix);
+
+    // Drawing the corner 4
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    setTexture(sceneShaderProgram, standTextureID, 0, toggleTexture);
+    setMaterial(sceneShaderProgram, 0.4f, 0.6f, 0.3f, 40.0f, toggleShadows);
+    glBindVertexArray(cubeVaoRepeat);
 
     // Right stand 1 model matrix
     glm::mat4 rStand1ModelMatrix = glm::translate(iMat, glm::vec3(55.0f, 2.0f, 0.0f)) * glm::scale(iMat, glm::vec3(10.0f, 7.0f, 120.0f));
@@ -534,59 +587,8 @@ void drawStadium(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram)
     setUniqueColor(sceneShaderProgram, 0.8f, 0.8f, 0.8f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    // Right wall model matrix
-    glm::mat4 rightWallModelMatrix = glm::translate(iMat, glm::vec3(85.0f, 13.0f, 0.0f)) * glm::scale(iMat, glm::vec3(10.0f, 29.0f, 120.0f));
-    rightWallModelMatrix = worldMatrix * rightWallModelMatrix;
-    setWorldMatrix(sceneShaderProgram, rightWallModelMatrix);
+    glBindVertexArray(0);
 
-    // Drawing the right wall
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Left wall model matrix
-    glm::mat4 leftWallModelMatrix = glm::translate(iMat, glm::vec3(-85.0f, 13.0f, 0.0f)) * glm::scale(iMat, glm::vec3(10.0f, 29.0f, 120.0f));
-    leftWallModelMatrix = worldMatrix * leftWallModelMatrix;
-    setWorldMatrix(sceneShaderProgram, leftWallModelMatrix);
-
-    // Drawing the left wall
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Corner 1 model matrix (near right)
-    glm::mat4 corner1ModelMatrix = glm::translate(iMat, glm::vec3(85.0f, 9.0f, 65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
-    corner1ModelMatrix = worldMatrix * corner1ModelMatrix;
-    setWorldMatrix(sceneShaderProgram, corner1ModelMatrix);
-
-    // Drawing the corner 1
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Corner 2 model matrix (near left)
-    glm::mat4 corner2ModelMatrix = glm::translate(iMat, glm::vec3(-85.0f, 9.0f, 65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
-    corner2ModelMatrix = worldMatrix * corner2ModelMatrix;
-    setWorldMatrix(sceneShaderProgram, corner2ModelMatrix);
-
-    // Drawing the corner 2
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Corner 3 model matrix (far right)
-    glm::mat4 corner3ModelMatrix = glm::translate(iMat, glm::vec3(85.0f, 9.0f, -65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
-    corner3ModelMatrix = worldMatrix * corner3ModelMatrix;
-    setWorldMatrix(sceneShaderProgram, corner3ModelMatrix);
-
-    // Drawing the corner 3
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Corner 4 model matrix (far left)
-    glm::mat4 corner4ModelMatrix = glm::translate(iMat, glm::vec3(-85.0f, 9.0f, -65.0f)) * glm::scale(iMat, glm::vec3(10.0f, 21.0f, 10.0f));
-    corner4ModelMatrix = worldMatrix * corner4ModelMatrix;
-    setWorldMatrix(sceneShaderProgram, corner4ModelMatrix);
-
-    // Drawing the corner 4
-    setUniqueColor(sceneShaderProgram, 0.039f, 0.378f, 0.039f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 
