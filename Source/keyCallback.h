@@ -95,6 +95,35 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
     }
 
+    // TEMPORARY
+    // P1 scores
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+    {
+        score(true, false);
+    }
+    // P2 scores
+    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+    {
+        score(false, true);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+    {
+        if (fall == -1) {
+            fall = 0;
+        }
+        else if (fall == 0) {
+            fall = 1;
+        }
+        else if (fall == 1) {
+            fall = 2;
+        }
+        else {
+            fall = -1;
+        }
+        
+    }
+
 
     // Toggle shadows
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)

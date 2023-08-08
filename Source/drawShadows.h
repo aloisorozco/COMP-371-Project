@@ -471,3 +471,74 @@ void drawSphereShadow(glm::mat4 worldMatrix, int sphereVao, int shadowShaderProg
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+void drawScoreboardShadow(glm::mat4 worldMatrix, int cubeVao, int shadowShaderProgram) {
+
+    glBindVertexArray(cubeVao);
+
+    // Board model matrix
+    glm::mat4 boardModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 40.0f, -70.0f)) * glm::scale(iMat, glm::vec3(85.0f, 45.0f, 2.0f));
+    boardModelMatrix = worldMatrix * boardModelMatrix;
+    setWorldMatrix(shadowShaderProgram, boardModelMatrix);
+
+    // Drawing the board
+    setUniqueColor(shadowShaderProgram, 0.392f, 0.247f, 0.137f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Board leg 1 model matrix
+    glm::mat4 boardLeg1ModelMatrix = glm::translate(iMat, glm::vec3(25.0f, 21.0f, -72.0f)) * glm::scale(iMat, glm::vec3(3.0f, 45.0f, 3.0f));
+    boardLeg1ModelMatrix = worldMatrix * boardLeg1ModelMatrix;
+    setWorldMatrix(shadowShaderProgram, boardLeg1ModelMatrix);
+
+    // Drawing the board leg 1
+    setUniqueColor(shadowShaderProgram, 0.392f, 0.247f, 0.137f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Board leg 2 model matrix
+    glm::mat4 boardLeg2ModelMatrix = glm::translate(iMat, glm::vec3(-25.0f, 21.0f, -72.0f)) * glm::scale(iMat, glm::vec3(3.0f, 45.0f, 3.0f));
+    boardLeg2ModelMatrix = worldMatrix * boardLeg2ModelMatrix;
+    setWorldMatrix(shadowShaderProgram, boardLeg2ModelMatrix);
+
+    // Drawing the board leg 2
+    setUniqueColor(shadowShaderProgram, 0.392f, 0.247f, 0.137f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Screen model matrix
+    glm::mat4 screenModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 40.0f, -69.0f)) * glm::scale(iMat, glm::vec3(80.0f, 40.0f, 1.0f));
+    screenModelMatrix = worldMatrix * screenModelMatrix;
+    setWorldMatrix(shadowShaderProgram, screenModelMatrix);
+
+    // Drawing the screen
+    setUniqueColor(shadowShaderProgram, 0.0f, 0.0f, 0.2f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Colon 1 model matrix
+    glm::mat4 colon1ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 40.0f, -68.5f)) * glm::scale(iMat, glm::vec3(1.0f, 1.0f, 1.0f));
+    colon1ModelMatrix = worldMatrix * colon1ModelMatrix;
+    setWorldMatrix(shadowShaderProgram, colon1ModelMatrix);
+
+    // Drawing the colon 1
+    setUniqueColor(shadowShaderProgram, 1.0f, 0.98f, 0.313f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Colon 2 model matrix
+    glm::mat4 colon2ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 35.0f, -68.5f)) * glm::scale(iMat, glm::vec3(1.0f, 1.0f, 1.0f));
+    colon2ModelMatrix = worldMatrix * colon2ModelMatrix;
+    setWorldMatrix(shadowShaderProgram, colon2ModelMatrix);
+
+    // Drawing the colon 2
+    setUniqueColor(shadowShaderProgram, 1.0f, 0.98f, 0.313f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glBindVertexArray(0);
+
+    // Drawing point numbers
+    drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(-20.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score1[0]);
+    drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(-10.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score1[1]);
+    drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(10.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score2[0]);
+    drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(20.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score2[1]);
+
+    // Drawing set numbers
+    drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(-25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore1);
+    drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore2);
+}

@@ -32,6 +32,7 @@
 #include "vertexArrays.h"
 #include "keyCallBack.h"
 #include "createVao.h"
+#include "createParticles.h"
 #include "loadShadersAndTextures.h"
 #include "drawSphere.h"
 #include "drawShadows.h"
@@ -69,6 +70,10 @@ float wristXAngle = 0.0f;
 float wristYAngle = 0.0f;
 float wristZAngle = 0.0f;
 
+// Score count
+bool p1Scored;
+bool p2Scored;
+
 // Shader program
 int sceneShaderProgram;
 int shadowShaderProgram;
@@ -94,6 +99,9 @@ float cameraHorizontalAngle = 90.0f;
 float cameraVerticalAngle = -35.0f;
 float theta = glm::radians(cameraHorizontalAngle);
 float phi = glm::radians(cameraVerticalAngle);
+
+// Temperature
+int fall = -1;
 
 
 // Rendering of model
@@ -215,7 +223,7 @@ int main(int argc, char* argv[])
         glfwTerminate();
         return -1;
     }
-    //test
+
     // Load Textures
 #if defined(PLATFORM_OSX)
     GLuint clayTextureID = loadTexture("../Assets/Textures/clay.jpg");
@@ -233,6 +241,7 @@ int main(int argc, char* argv[])
     GLuint skyTextureID = loadTexture("../Assets/Textures/sky.jpg");
     GLuint grassTextureID = loadTexture("../Assets/Textures/grass.jpg");
     GLuint starsTextureID = loadTexture("../Assets/Textures/stars.jpg");
+    GLuint woodTextureID = loadTexture("../Assets/Textures/wood.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -282,7 +291,7 @@ int main(int argc, char* argv[])
     worldXAngle = 0.0f;
 
     // Light position
-    float lightPosX = 3.0f;
+    float lightPosX = 30.0f;
     float lightPosY = 83.0f;
     float lightPosZ = 1.0f;
 
@@ -351,8 +360,9 @@ int main(int argc, char* argv[])
     int cubeVaoRepeat = createLightTexturedVertexArrayObject(cubeArrayRepeat, sizeof(cubeArrayRepeat));
 
     std::vector<LightTexturedColoredVertex> vertices = generateSphereVertices(2.0f, 30, 30);
-    std::vector<int> indices = generateSphereIndices(30, 30);
-    int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), indices.data(), indices.size());
+    std::vector<int> tennisIndices = generateSphereIndices(30, 30);
+    std::vector<int> snowIndices = generateSphereIndices(10, 10);
+    int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), tennisIndices.data(), tennisIndices.size());
 
     // Enabling culling and depth test
     glEnable(GL_CULL_FACE);
@@ -397,6 +407,11 @@ int main(int argc, char* argv[])
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(cameraPosition));
             glUseProgram(0);
+        }
+
+        // Initialize particles
+        for (loop = 0; loop < MAX_PARTICLES; loop++) {
+            initParticles(loop);
         }
 
         // Light parameters for default light
@@ -473,10 +488,12 @@ int main(int argc, char* argv[])
         drawCourtShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Stadium
         drawStadiumShadow(worldMatrix, cubeVao, shadowShaderProgram);
+        // Scoreboard
+        drawScoreboardShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Net
         drawNetShadow(worldMatrix, netGridVao, cubeVao, shadowShaderProgram);
         // Sphere
-        drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
+        drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, tennisIndices);
         // Unbind geometry
         glBindVertexArray(0);
         
@@ -491,7 +508,6 @@ int main(int argc, char* argv[])
         // Bind screen as output framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // Clear color and depth data on framebuffer
-        //glClearColor(0.286f, 0.525f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Grid and axis
         if (toggleGrid)
@@ -502,8 +518,10 @@ int main(int argc, char* argv[])
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
         drawStadium(worldMatrix, cubeVao, sceneShaderProgram);
+        // Scoreboard
+        drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Sphere
-        drawSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID);
+        drawSphere(worldMatrix, sphereVao, sceneShaderProgram, tennisIndices, tennisBallTextureID);
         // Light Cube
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPosition);
         // Sky Box
@@ -517,6 +535,16 @@ int main(int argc, char* argv[])
         drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
         // Model 2
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
+        // Temperatures
+        if (fall == 0) 
+        {
+            drawRain(worldMatrix, sceneShaderProgram, cubeVao);
+        }
+        else if (fall == 2)
+        {
+            drawSnow(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, woodTextureID);
+        }
+
         // Unbind geometry
         glBindVertexArray(0);
 
@@ -577,25 +605,25 @@ int main(int argc, char* argv[])
         // Rotate world up
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) // move up
         {
-            worldXAngle -= 1.0f;
+            worldXAngle -= 0.3f;
         }
 
         // Rotate world down
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) // move up
         {
-            worldXAngle += 1.0f;
+            worldXAngle += 0.3f;
         }
 
         // Rotate world left
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) // move up
         {
-            worldYAngle += 1.0f;
+            worldYAngle += 0.3f;
         }
 
         // Rotate world right
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) // move up
         {
-            worldYAngle -= 1.0f;
+            worldYAngle -= 0.3f;
         }
 
         // Pan the camera on the X axis

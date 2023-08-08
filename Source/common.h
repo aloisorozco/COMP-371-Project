@@ -2,6 +2,7 @@
 #include <GL/glew.h>  
 
 #include <GLFW/glfw3.h> 
+#include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -34,6 +35,10 @@ extern float wristZAngle;
 extern GLenum renderModeModel;
 extern GLenum renderModeRacketGrid;
 
+// Score count
+extern bool p1Scored;
+extern bool p2Scored;
+
 extern glm::mat4 iMat;
 
 extern float lightAngle;
@@ -63,6 +68,8 @@ extern float cameraVerticalAngle;
 extern float theta;
 extern float phi;
 
+extern int fall;
+
 // --- Global functions --- 
 extern void setWorldMatrix(int shaderProgram, glm::mat4 worldMatrix);
 extern void setProjectionMatrix(int shaderProgram, glm::mat4 worldMatrix);
@@ -71,5 +78,5 @@ extern void setTexture(int sceneShaderProgram, GLuint textureID, int textureUnit
 extern void noTexture(int sceneShaderProgram);
 extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight, float specularLight, float alpha, int useShadows);
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
-extern void setTransparency(int sceneShaderProgram, float transparency);
-extern void noTransparency(int sceneShaderProgram);
+extern void score(bool p1Scored, bool p2Scored);
+extern void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID);

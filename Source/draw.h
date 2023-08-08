@@ -8,6 +8,7 @@
 #include <glm/common.hpp>
 
 #include "common.h"
+#include "scoreCalculations.h"
 
 
 // --- DRAWING AXIS ---
@@ -627,3 +628,248 @@ void drawSkyBox(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, int 
     glCullFace(GL_BACK);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Drawing a number on the scoreboard
+// IMPORTANT: activeNumber 11 and 12 represent A and d respectively***
+void drawNumber(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram, glm::vec3 initialPosition, glm::vec3 initialScale, int activeNumber) {
+    noTexture(sceneShaderProgram);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+    glBindVertexArray(cubeVao);
+
+    // Line 1 matrix (bottom)
+    glm::mat4 line1ModelMatrix = glm::translate(iMat, (glm::vec3(0.0f, -5.0f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(5.0f, 1.0f, 1.0f) * initialScale);
+    line1ModelMatrix = worldMatrix * line1ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line1ModelMatrix);
+    if (activeNumber == 0 || activeNumber == 2 || activeNumber == 3 || activeNumber == 5 || activeNumber == 6 || activeNumber == 8 || activeNumber == 12) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Line 2 matrix (middle)
+    glm::mat4 line2ModelMatrix = glm::translate(iMat, (glm::vec3(0.0f, 0.0f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(5.0f, 1.0f, 1.0f) * initialScale);
+    line2ModelMatrix = worldMatrix * line2ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line2ModelMatrix);
+    if (activeNumber == 2 || activeNumber == 3 || activeNumber == 4 || activeNumber == 5 || activeNumber == 6 || activeNumber == 8 || activeNumber == 9 || activeNumber == 11 || activeNumber == 12) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Line 3 matrix (top)
+    glm::mat4 line3ModelMatrix = glm::translate(iMat, (glm::vec3(0.0f, 5.0f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(5.0f, 1.0f, 1.0f) * initialScale);
+    line3ModelMatrix = worldMatrix * line3ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line3ModelMatrix);
+    if (activeNumber == 0 || activeNumber == 2 || activeNumber == 3 || activeNumber == 5 || activeNumber == 6 || activeNumber == 7 || activeNumber == 8 || activeNumber == 9 || activeNumber == 11) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Line 4 matrix (bottom left)
+    glm::mat4 line4ModelMatrix = glm::translate(iMat, (glm::vec3(-3.0f, -2.5f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(1.0f, 5.0f, 1.0f) * initialScale);
+    line4ModelMatrix = worldMatrix * line4ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line4ModelMatrix);
+    if (activeNumber == 0 || activeNumber == 2 || activeNumber == 6 || activeNumber == 8 || activeNumber == 11 || activeNumber == 12) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Line 5 matrix (bottom right)
+    glm::mat4 line5ModelMatrix = glm::translate(iMat, (glm::vec3(3.0f, -2.5f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(1.0f, 5.0f, 1.0f) * initialScale);
+    line5ModelMatrix = worldMatrix * line5ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line5ModelMatrix);
+    if (activeNumber == 0 || activeNumber == 1 || activeNumber == 3 || activeNumber == 4 || activeNumber == 5 || activeNumber == 6 || activeNumber == 7 || activeNumber == 8 || activeNumber == 9 || activeNumber == 11 || activeNumber == 12) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Line 6 matrix (top left)
+    glm::mat4 line6ModelMatrix = glm::translate(iMat, (glm::vec3(-3.0f, 2.5f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(1.0f, 5.0f, 1.0f) * initialScale);
+    line6ModelMatrix = worldMatrix * line6ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line6ModelMatrix);
+    if (activeNumber == 0 || activeNumber == 4 || activeNumber == 5 || activeNumber == 6 || activeNumber == 8 || activeNumber == 9 || activeNumber == 11) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Line 7 matrix (top right)
+    glm::mat4 line7ModelMatrix = glm::translate(iMat, (glm::vec3(3.0f, 2.5f, -68.5f) + initialPosition) * initialScale) * glm::scale(iMat, glm::vec3(1.0f, 5.0f, 1.0f) * initialScale);
+    line7ModelMatrix = worldMatrix * line7ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, line7ModelMatrix);
+    if (activeNumber == 0 || activeNumber == 1 || activeNumber == 2 || activeNumber == 3 || activeNumber == 4 || activeNumber == 7 || activeNumber == 8 || activeNumber == 9 || activeNumber == 11 || activeNumber == 12) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.5f);
+    }
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glBindVertexArray(0);
+}
+
+
+void drawScoreboardParticle(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram, float lastFrameTime)
+{
+    float particleYPosition = 21.0f;
+    float particleXPosition = -39.0f;
+    float particleVelocity = 200.0f;
+    static float animationStartTime = lastFrameTime;
+    float currentSpeed = (lastFrameTime - animationStartTime) * particleVelocity;
+    float distanceY = 59.0f - 21.0f;
+    float distanceX = 78.0f/* - abs(startingPositionX)*/;
+    float animationTime = std::fmod(currentSpeed, distanceY);
+    float animationProgress = animationTime / distanceY;
+
+
+    // Calculate the particle's position based on animationProgress
+    if (animationProgress <= 0.25f) {
+        particleXPosition = -39.0f;
+        particleYPosition = 21.0f + animationProgress * (distanceY * 4);
+    }
+    else if (animationProgress <= 0.5f) {
+        particleYPosition = 59.0f;
+        particleXPosition = -39.0f + (animationProgress - 0.25f) * (distanceX * 4);
+    }
+    else if (animationProgress <= 0.75f) {
+        particleXPosition = 39.0f;
+        particleYPosition = (21.0f + distanceY) - (animationProgress - 0.5f) * (distanceY * 4);
+    }
+    else {
+        particleYPosition = 21.0f;
+        particleXPosition = (-39.0f + distanceX) - (animationProgress - 0.75f) * (distanceX * 4);
+    }
+
+    glBindVertexArray(cubeVao);
+    noTexture(sceneShaderProgram);
+
+    // Particle model matrix
+    glm::mat4 particleModelMatrix = glm::translate(iMat, glm::vec3(particleXPosition, particleYPosition, -68.5f)) * glm::scale(iMat, glm::vec3(2.0f, 2.0f, 1.0f));
+    particleModelMatrix = worldMatrix * particleModelMatrix;
+    setWorldMatrix(sceneShaderProgram, particleModelMatrix);
+
+    // Drawing the particle
+    setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void drawScoreboard(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram, int woodTextureID) {
+
+    setTexture(sceneShaderProgram, woodTextureID, 0, toggleTexture);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+    glBindVertexArray(cubeVao);
+
+    // Board model matrix
+    glm::mat4 boardModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 40.0f, -70.0f)) * glm::scale(iMat, glm::vec3(85.0f, 45.0f, 2.0f));
+    boardModelMatrix = worldMatrix * boardModelMatrix;
+    setWorldMatrix(sceneShaderProgram, boardModelMatrix);
+
+    // Drawing the board
+    setUniqueColor(sceneShaderProgram, 0.392f, 0.247f, 0.137f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Board leg 1 model matrix
+    glm::mat4 boardLeg1ModelMatrix = glm::translate(iMat, glm::vec3(25.0f, 21.0f, -72.0f)) * glm::scale(iMat, glm::vec3(3.0f, 45.0f, 3.0f));
+    boardLeg1ModelMatrix = worldMatrix * boardLeg1ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, boardLeg1ModelMatrix);
+
+    // Drawing the board leg 1
+    setUniqueColor(sceneShaderProgram, 0.392f, 0.247f, 0.137f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Board leg 2 model matrix
+    glm::mat4 boardLeg2ModelMatrix = glm::translate(iMat, glm::vec3(-25.0f, 21.0f, -72.0f)) * glm::scale(iMat, glm::vec3(3.0f, 45.0f, 3.0f));
+    boardLeg2ModelMatrix = worldMatrix * boardLeg2ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, boardLeg2ModelMatrix);
+
+    // Drawing the board leg 2
+    setUniqueColor(sceneShaderProgram, 0.392f, 0.247f, 0.137f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+    noTexture(sceneShaderProgram);
+
+    // Screen model matrix
+    glm::mat4 screenModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 40.0f, -69.0f)) * glm::scale(iMat, glm::vec3(80.0f, 40.0f, 1.0f));
+    screenModelMatrix = worldMatrix * screenModelMatrix;
+    setWorldMatrix(sceneShaderProgram, screenModelMatrix);
+
+    // Drawing the screen
+    setUniqueColor(sceneShaderProgram, 0.0f, 0.0f, 0.2f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Colon 1 model matrix
+    glm::mat4 colon1ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 40.0f, -68.5f)) * glm::scale(iMat, glm::vec3(1.0f, 1.0f, 1.0f));
+    colon1ModelMatrix = worldMatrix * colon1ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, colon1ModelMatrix);
+
+    // Drawing the colon 1
+    setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Colon 2 model matrix
+    glm::mat4 colon2ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 35.0f, -68.5f)) * glm::scale(iMat, glm::vec3(1.0f, 1.0f, 1.0f));
+    colon2ModelMatrix = worldMatrix * colon2ModelMatrix;
+    setWorldMatrix(sceneShaderProgram, colon2ModelMatrix);
+
+    // Drawing the colon 2
+    setUniqueColor(sceneShaderProgram, 1.0f, 0.98f, 0.313f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glBindVertexArray(0);
+
+    // Drawing point numbers
+    drawNumber(worldMatrix, cubeVao, sceneShaderProgram, glm::vec3(-20.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score1[0]);
+    drawNumber(worldMatrix, cubeVao, sceneShaderProgram, glm::vec3(-10.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score1[1]);
+    drawNumber(worldMatrix, cubeVao, sceneShaderProgram, glm::vec3(10.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score2[0]);
+    drawNumber(worldMatrix, cubeVao, sceneShaderProgram, glm::vec3(20.0f, 38.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), score2[1]);
+
+    // Drawing set numbers
+    drawNumber(worldMatrix, cubeVao, sceneShaderProgram, glm::vec3(-25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore1);
+    drawNumber(worldMatrix, cubeVao, sceneShaderProgram, glm::vec3(25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore2);
+
+    // Particle for scoreboard
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime());
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 0.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 1.0f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 1.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 2.0f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 2.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 3.0f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 3.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 4.0f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 4.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 5.0f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 5.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 6.0f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 6.5f);
+    drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 7.0f);
+}
