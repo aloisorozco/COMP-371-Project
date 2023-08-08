@@ -45,7 +45,7 @@ glm::mat4 iMat = glm::mat4(1.0f);
 float lightAngle = 0.0f;
 
 // Upper arm (model --> upArm acts as the root of the model)
-glm::vec3 upArmScale = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 upArmScale = glm::vec3(0.5f);
 glm::vec3 upArmPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 float upArmYAngle1 = 0.0f;
 float upArmYAngle2 = 0.0f;
@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
     int cubeVao = createLightTexturedVertexArrayObject(cubeArray, sizeof(cubeArray));
     int cubeVaoRepeat = createLightTexturedVertexArrayObject(cubeArrayRepeat, sizeof(cubeArrayRepeat));
 
-    std::vector<LightTexturedColoredVertex> vertices = generateSphereVertices(2.0f, 30, 30);
+    std::vector<LightTexturedColoredVertex> vertices = generateSphereVertices(0.8f, 30, 30);
     std::vector<int> tennisIndices = generateSphereIndices(30, 30);
     std::vector<int> snowIndices = generateSphereIndices(10, 10);
     int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), tennisIndices.data(), tennisIndices.size());

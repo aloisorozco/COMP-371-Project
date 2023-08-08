@@ -270,7 +270,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     noTexture(sceneShaderProgram);
 
     // Court line right model matrix
-    glm::mat4 courtRightModelMatrix = glm::translate(iMat, glm::vec3(15.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 0.1f, 74.0f));
+    glm::mat4 courtRightModelMatrix = glm::translate(iMat, glm::vec3(15.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 73.0f));
     courtRightModelMatrix = worldMatrix * courtRightModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtRightModelMatrix);
 
@@ -280,7 +280,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court line left model matrix
-    glm::mat4 courtLeftModelMatrix = glm::translate(iMat, glm::vec3(-15.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 0.1f, 74.0f));
+    glm::mat4 courtLeftModelMatrix = glm::translate(iMat, glm::vec3(-15.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 73.0f));
     courtLeftModelMatrix = worldMatrix * courtLeftModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtLeftModelMatrix);
 
@@ -289,8 +289,28 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    // Court line outer right model matrix
+    courtRightModelMatrix = glm::translate(iMat, glm::vec3(20.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 73.0f));
+    courtRightModelMatrix = worldMatrix * courtRightModelMatrix;
+    setWorldMatrix(sceneShaderProgram, courtRightModelMatrix);
+
+    // Drawing the court line right outer
+    setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
+    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Court line left outer model matrix
+    courtLeftModelMatrix = glm::translate(iMat, glm::vec3(-20.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 73.0f));
+    courtLeftModelMatrix = worldMatrix * courtLeftModelMatrix;
+    setWorldMatrix(sceneShaderProgram, courtLeftModelMatrix);
+
+    // Drawing the court line left outer
+    setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
+    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
     // Court very bottom line model matrix
-    glm::mat4 courtBottom1ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 36.0f)) * glm::scale(iMat, glm::vec3(32.0f, 0.1f, 2.0f));
+    glm::mat4 courtBottom1ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 36.0f)) * glm::scale(iMat, glm::vec3(40.0f, 0.1f, 1.0f));
     courtBottom1ModelMatrix = worldMatrix * courtBottom1ModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtBottom1ModelMatrix);
 
@@ -300,7 +320,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court very top line model matrix
-    glm::mat4 courtTop1ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, -36.0f)) * glm::scale(iMat, glm::vec3(32.0f, 0.1f, 2.0f));
+    glm::mat4 courtTop1ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, -36.0f)) * glm::scale(iMat, glm::vec3(40.0f, 0.1f, 1.0f));
     courtTop1ModelMatrix = worldMatrix * courtTop1ModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtTop1ModelMatrix);
 
@@ -310,7 +330,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court close bottom line model matrix
-    glm::mat4 courtBottom2ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 26.0f)) * glm::scale(iMat, glm::vec3(32.0f, 0.1f, 2.0f));
+    glm::mat4 courtBottom2ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 18.0f)) * glm::scale(iMat, glm::vec3(30.0f, 0.1f, 1.0f));
     courtBottom2ModelMatrix = worldMatrix * courtBottom2ModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtBottom2ModelMatrix);
 
@@ -320,7 +340,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court close top line model matrix
-    glm::mat4 courtTop2ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, -26.0f)) * glm::scale(iMat, glm::vec3(32.0f, 0.1f, 2.0f));
+    glm::mat4 courtTop2ModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, -18.0f)) * glm::scale(iMat, glm::vec3(30.0f, 0.1f, 1.0f));
     courtTop2ModelMatrix = worldMatrix * courtTop2ModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtTop2ModelMatrix);
 
@@ -330,7 +350,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court middle line model matrix
-    glm::mat4 courtMiddleModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 0.1f, 50.0f));
+    glm::mat4 courtMiddleModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 36.0f));
     courtMiddleModelMatrix = worldMatrix * courtMiddleModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtMiddleModelMatrix);
 
@@ -339,8 +359,28 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    // Court line small middle close
+    courtLeftModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, 35.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 2.0f));
+    courtLeftModelMatrix = worldMatrix * courtLeftModelMatrix;
+    setWorldMatrix(sceneShaderProgram, courtLeftModelMatrix);
+
+    // Drawing the Court line small middle
+    setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
+    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Court line small middle far
+    courtLeftModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -0.5f, -35.0f)) * glm::scale(iMat, glm::vec3(1.0f, 0.1f, 2.0f));
+    courtLeftModelMatrix = worldMatrix * courtLeftModelMatrix;
+    setWorldMatrix(sceneShaderProgram, courtLeftModelMatrix);
+
+    // Drawing the Court line small middle
+    setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
+    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
     // Court base model matrix
-    glm::mat4 courtModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -1.0f, 0.0f)) * glm::scale(iMat, glm::vec3(36.0f, 0.5f, 78.0f));
+    glm::mat4 courtModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -1.0f, 0.0f)) * glm::scale(iMat, glm::vec3(46.0f, 0.5f, 78.0f));
     courtModelMatrix = worldMatrix * courtModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtModelMatrix);
 
@@ -390,7 +430,7 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
     setBlend(sceneShaderProgram, 0.0f);
 
     // Net right post model matrix
-    glm::mat4 netRightModelMatrix = glm::translate(iMat, glm::vec3(17.0f, 5.0f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 12.0f, 2.0f));
+    glm::mat4 netRightModelMatrix = glm::translate(iMat, glm::vec3(20.0f, 3.0f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 8.5f, 1.0f));
     netRightModelMatrix = worldMatrix * netRightModelMatrix;
     setWorldMatrix(sceneShaderProgram, netRightModelMatrix);
 
@@ -400,7 +440,7 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net left post model matrix
-    glm::mat4 netLeftModelMatrix = glm::translate(iMat, glm::vec3(-17.0f, 5.0f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 12.0f, 2.0f));
+    glm::mat4 netLeftModelMatrix = glm::translate(iMat, glm::vec3(-20.0f, 3.0f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 8.5f, 1.0f));
     netLeftModelMatrix = worldMatrix * netLeftModelMatrix;
     setWorldMatrix(sceneShaderProgram, netLeftModelMatrix);
 
@@ -410,7 +450,7 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net top model matrix
-    glm::mat4 netTopModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 10.0f, 0.0f)) * glm::scale(iMat, glm::vec3(32.0f, 2.0f, 0.2f));
+    glm::mat4 netTopModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 6.0f, 0.0f)) * glm::scale(iMat, glm::vec3(40.0f, 1.0f, 0.2f));
     netTopModelMatrix = worldMatrix * netTopModelMatrix;
     setWorldMatrix(sceneShaderProgram, netTopModelMatrix);
 
@@ -420,7 +460,7 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net bottom model matrix
-    glm::mat4 netBottomModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 3.0f, 0.0f)) * glm::scale(iMat, glm::vec3(32.0f, 0.5f, 0.2f));
+    glm::mat4 netBottomModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 1.5f, 0.0f)) * glm::scale(iMat, glm::vec3(40.0f, 0.5f, 0.2f));
     netBottomModelMatrix = worldMatrix * netBottomModelMatrix;
     setWorldMatrix(sceneShaderProgram, netBottomModelMatrix);
 
@@ -432,7 +472,7 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net middle model matrix
-    glm::mat4 netMiddleModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 7.0f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 8.0f, 0.2f));
+    glm::mat4 netMiddleModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 3.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 4.5f, 0.2f));
     netMiddleModelMatrix = worldMatrix * netMiddleModelMatrix;
     setWorldMatrix(sceneShaderProgram, netMiddleModelMatrix);
 
@@ -442,7 +482,7 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net grid model matrix
-    glm::mat4 netGridModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 7.0f, 0.0f)) * glm::scale(iMat, glm::vec3(17.0f, 3.8f, 1.0f));
+    glm::mat4 netGridModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 3.5f, 0.0f)) * glm::scale(iMat, glm::vec3(20.0f, 2.0f, 1.0f));
     netGridModelMatrix = worldMatrix * netGridModelMatrix;
     setWorldMatrix(sceneShaderProgram, netGridModelMatrix);
 
