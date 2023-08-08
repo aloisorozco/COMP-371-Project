@@ -242,6 +242,9 @@ int main(int argc, char* argv[])
     GLuint grassTextureID = loadTexture("../Assets/Textures/grass.jpg");
     GLuint starsTextureID = loadTexture("../Assets/Textures/stars.jpg");
     GLuint woodTextureID = loadTexture("../Assets/Textures/wood.jpg");
+    GLuint cloudyTextureID = loadTexture("../Assets/Textures/cloudy.jpg");
+    GLuint standTextureID = loadTexture("../Assets/Textures/stand2.jpg");
+    GLuint wallTextureID = loadTexture("../Assets/Textures/wall.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -517,7 +520,7 @@ int main(int argc, char* argv[])
         // Net
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
-        drawStadium(worldMatrix, cubeVao, sceneShaderProgram);
+        drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Sphere
@@ -526,7 +529,19 @@ int main(int argc, char* argv[])
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPosition);
         // Sky Box
         if (toggleDefaultLight) {
-            drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, skyTextureID);
+            if (fall == 0)
+            {
+                drawRain(worldMatrix, sceneShaderProgram, cubeVao);
+                drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, cloudyTextureID);
+            }
+            else if (fall == 2)
+            {
+                drawSnow(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, woodTextureID);
+                drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, skyTextureID);
+            }
+            else {
+                drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, skyTextureID);
+            }
         }
         else {
             drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, starsTextureID);
@@ -536,14 +551,6 @@ int main(int argc, char* argv[])
         // Model 2
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
         // Temperatures
-        if (fall == 0) 
-        {
-            drawRain(worldMatrix, sceneShaderProgram, cubeVao);
-        }
-        else if (fall == 2)
-        {
-            drawSnow(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, woodTextureID);
-        }
 
         // Unbind geometry
         glBindVertexArray(0);
