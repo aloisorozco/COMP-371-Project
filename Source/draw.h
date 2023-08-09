@@ -10,6 +10,9 @@
 #include "common.h"
 #include "scoreCalculations.h"
 
+using namespace glm;
+using namespace std;
+
 
 // --- DRAWING AXIS ---
 void drawGridAndAxis(glm::mat4 worldMatrix, int cubeVao, int gridVao, int sceneShaderProgram)
@@ -671,19 +674,6 @@ void drawSkyBox(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, int 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Drawing a number on the scoreboard
 // IMPORTANT: activeNumber 11 and 12 represent A and d respectively***
 void drawNumber(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram, glm::vec3 initialPosition, glm::vec3 initialScale, int activeNumber) {
@@ -914,4 +904,84 @@ void drawScoreboard(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram, 
     drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 6.0f);
     drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 6.5f);
     drawScoreboardParticle(worldMatrix, cubeVao, sceneShaderProgram, glfwGetTime() + 7.0f);
+}
+
+
+
+void drawLights(mat4 worldMatrix, int cubeVao, int shader) {
+
+    glBindVertexArray(cubeVao);
+    noTexture(shader);
+    setUniqueColor(shader, 1.0f, 1.0f, 1.0f);
+
+    // Right Back Post matrix
+    mat4 postScaleMatrix = scale(iMat, glm::vec3(2.0f, 80.0f, 2.0f));
+    mat4 postModelMatrix = translate(iMat, glm::vec3(85.0f, 40.0f, -65.0f)) * postScaleMatrix;
+    postModelMatrix = worldMatrix * postModelMatrix;
+    setWorldMatrix(shader, postModelMatrix);
+
+    // Drawing the Right Back post
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    //Right Front Post matrix
+    postModelMatrix = translate(iMat, glm::vec3(85.0f, 40.0f, 65.0f)) * postScaleMatrix;
+    postModelMatrix = worldMatrix * postModelMatrix;
+    setWorldMatrix(shader, postModelMatrix);
+
+    // Drawing the Right front post
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+    //left back Post Matrix
+    postModelMatrix = translate(iMat, glm::vec3(-85.0f, 40.0f, -65.0f)) * postScaleMatrix;
+    postModelMatrix = worldMatrix * postModelMatrix;
+    setWorldMatrix(shader, postModelMatrix);
+
+    // Drawing the Left Back post
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // left front post matrix
+    postModelMatrix = translate(iMat, glm::vec3(-85.0f, 40.0f, 65.0f)) * postScaleMatrix;
+    postModelMatrix = worldMatrix * postModelMatrix;
+    setWorldMatrix(shader, postModelMatrix);
+
+    // Drawing the left front post
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // right back top light
+    mat4 lightScaleMatrix = scale(iMat, glm::vec3(7.0f, 5.0f, 5.0f));
+    mat4 lightRotationMatrix = rotate(iMat, radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rotate(iMat,radians(45.0f),  glm::vec3(0.0f, 0.0f, 1.0f));
+    mat4 lightModelMatrix = translate(iMat, glm::vec3(83.0f, 79.0f, -63.0f))* lightRotationMatrix * lightScaleMatrix;
+    lightModelMatrix = worldMatrix * lightModelMatrix;
+    setWorldMatrix(shader, lightModelMatrix);
+
+    // Drawing the right back top light
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // right front top light
+    lightRotationMatrix = rotate(iMat, radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rotate(iMat, radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    lightModelMatrix = translate(iMat, glm::vec3(83.0f, 79.0f, 63.0f)) * lightRotationMatrix * lightScaleMatrix;
+    lightModelMatrix = worldMatrix * lightModelMatrix;
+    setWorldMatrix(shader, lightModelMatrix);
+
+    // Drawing the right front top light
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // left back top light
+    lightRotationMatrix = rotate(iMat, radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rotate(iMat, radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    lightModelMatrix = translate(iMat, glm::vec3(-83.0f, 79.0f, -63.0f)) * lightRotationMatrix * lightScaleMatrix;
+    lightModelMatrix = worldMatrix * lightModelMatrix;
+    setWorldMatrix(shader, lightModelMatrix);
+
+    // Drawing the left back top light
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // left front top light
+    lightRotationMatrix = rotate(iMat, radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rotate(iMat, radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    lightModelMatrix = translate(iMat, glm::vec3(-83.0f, 79.0f, 63.0f)) * lightRotationMatrix * lightScaleMatrix;
+    lightModelMatrix = worldMatrix * lightModelMatrix;
+    setWorldMatrix(shader, lightModelMatrix);
+
+    // Drawing the left front top light
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
