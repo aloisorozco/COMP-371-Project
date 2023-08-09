@@ -39,6 +39,18 @@ extern GLenum renderModeRacketGrid;
 extern bool p1Scored;
 extern bool p2Scored;
 
+// Tennis ball variables
+extern glm::vec3 sphereAcceleration;
+extern glm::vec3 sphereVelocity;
+extern glm::vec3 spherePosition;
+
+extern float sphereInitialYVelocity;
+
+extern bool shouldRotateSphere;
+extern bool isHittingNet;
+
+extern int sphereBounceAfterHittingNetCount;
+
 extern glm::mat4 iMat;
 
 extern float lightAngle;
@@ -79,4 +91,4 @@ extern void noTexture(int sceneShaderProgram);
 extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight, float specularLight, float alpha, int useShadows);
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
 extern void score(bool p1Scored, bool p2Scored);
-extern void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID);
+extern void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID, glm::vec3 racketPosition1, glm::vec3 racketPosition2);

@@ -103,6 +103,17 @@ float phi = glm::radians(cameraVerticalAngle);
 // Temperature
 int fall = -1;
 
+// Tennis ball variables
+glm::vec3 sphereAcceleration = glm::vec3(0);
+glm::vec3 sphereVelocity = glm::vec3(0);
+glm::vec3 spherePosition = glm::vec3(8.5f, 22.0f, 30.0f)
+;
+float sphereInitialYVelocity = 0.0f;
+
+bool shouldRotateSphere = true;
+bool isHittingNet = false;
+int sphereBounceAfterHittingNetCount = 0;
+
 
 // Rendering of model
 GLenum renderModeModel = GL_TRIANGLES;
@@ -521,7 +532,7 @@ int main(int argc, char* argv[])
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Sphere
-        drawSphere(worldMatrix, sphereVao, sceneShaderProgram, tennisIndices, tennisBallTextureID);
+        drawSphere(worldMatrix, sphereVao, sceneShaderProgram, tennisIndices, tennisBallTextureID, racketPosition1, racketPosition2);
         // Light Cube
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPosition);
         // Sky Box

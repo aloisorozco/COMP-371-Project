@@ -94,6 +94,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             m = 0;
         }
     }
+    
+
+    // Start game
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+    {
+        sphereAcceleration = glm::vec3(0, -0.028528f, 0);
+        sphereVelocity = glm::vec3(0.25, 0, 1);
+        spherePosition = glm::vec3(8.5f, 22.0f, 30.0f);
+        sphereInitialYVelocity = 0.2f;
+
+        shouldRotateSphere = true;
+        isHittingNet = false;
+        sphereBounceAfterHittingNetCount = 0;
+    }
 
     // TEMPORARY
     // P1 scores

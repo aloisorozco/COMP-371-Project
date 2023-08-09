@@ -209,7 +209,7 @@ void drawSnow(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std:
             glColor3f(1.0, 1.0, 1.0);
             glPushMatrix();
             glTranslatef(x, y, z);
-            drawSphere(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, snowTextureID);
+            drawSphere(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, snowTextureID, glm::vec3(0), glm::vec3(0));
             glPopMatrix();
 
             // Update values
