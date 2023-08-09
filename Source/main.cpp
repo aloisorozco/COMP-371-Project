@@ -47,8 +47,7 @@ float lightAngle = 0.0f;
 // Upper arm (model --> upArm acts as the root of the model)
 glm::vec3 upArmScale = glm::vec3(0.5f);
 glm::vec3 upArmPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-float upArmYAngle1 = 0.0f;
-float upArmYAngle2 = 0.0f;
+float upArmYAngle[] = { 0.0f, 0.0f };
 float upArmXAngle1 = 0.0f;
 float upArmXAngle2 = 0.0f;
 int whichRacket;
@@ -63,7 +62,7 @@ glm::vec3 racketColor2 = glm::vec3(0.192f, 0.102f, 1.0f);
 
 // Lower arm
 float lowArmZAngle = 0.0f;
-float lowArmXAngle = 0.0f;
+float lowArmXAngle[] = { 0.0f, 0.0f };
 
 // Racket handle (wrist)
 float wristXAngle = 0.0f;
@@ -106,6 +105,8 @@ int fall = -1;
 // Tennis ball variables
 bool canStartPoint = true;
 bool isP1sTurnToServe = true;
+bool canStartRacketAnimation = false;
+int playerRacketIndex = 1;
 
 //Pi variable
 float rotationAngle =0.0f; 
@@ -580,8 +581,8 @@ int main(int argc, char* argv[])
         if (toggleGrid)
             drawGridAndAxisShadow(worldMatrix, cubeVao, gridVao, shadowShaderProgram);
         // Models
-        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
-        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
+        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition1, upArmXAngle1, 0);
+        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition2, upArmXAngle2, 1);
         // Court
         drawCourtShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Stadium
@@ -642,9 +643,9 @@ int main(int argc, char* argv[])
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionSun);
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionMoon);
         // Model 1
-        drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
+        drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, 0);
         // Model 2
-        drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
+        drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, 1);
         // Temperatures
 
         // Unbind geometry
@@ -694,9 +695,10 @@ int main(int argc, char* argv[])
             upArmPosition = glm::vec3(0.0f);
             upArmXAngle1 = 0.0f;
             upArmXAngle2 = 0.0f;
-            upArmYAngle1 = 0.0f;
-            upArmYAngle2 = 0.0f;
-            lowArmXAngle = 0.0f;
+            upArmYAngle[0] = 0.0f;
+            upArmYAngle[1] = 0.0f;
+            lowArmXAngle[0] = 0.0f;
+            lowArmXAngle[1] = 0.0f;
             lowArmZAngle = 0.0f;
             wristXAngle = 0.0f;
             wristYAngle = 0.0f;

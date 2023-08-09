@@ -12,8 +12,7 @@
 // Upper arm (model --> upArm acts as the root of the model)
 extern glm::vec3 upArmScale;
 extern glm::vec3 upArmPosition;
-extern float upArmYAngle1;
-extern float upArmYAngle2;
+extern float upArmYAngle[];
 extern float upArmXAngle1;
 extern float upArmXAngle2;
 extern int whichRacket;
@@ -24,7 +23,7 @@ extern glm::vec3 racketPosition2;
 
 // Lower arm
 extern float lowArmZAngle;
-extern float lowArmXAngle;
+extern float lowArmXAngle[];
 
 // Racket handle (wrist)
 extern float wristXAngle;
@@ -42,6 +41,8 @@ extern bool p2Scored;
 // Tennis ball variables
 extern bool canStartPoint;
 extern bool isP1sTurnToServe;
+extern bool canStartRacketAnimation;
+extern int playerRacketIndex;
 
 extern glm::mat4 iMat;
 
@@ -83,5 +84,4 @@ extern void noTexture(int sceneShaderProgram);
 extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight, float specularLight, float alpha, int useShadows);
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
 extern void score(bool p1Scored, bool p2Scored);
-extern void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID, glm::vec3 racketPosition1, glm::vec3 racketPosition2);
 extern void startPoint();
