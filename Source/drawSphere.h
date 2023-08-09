@@ -108,8 +108,41 @@ float sphereRotationIncrement = 1;
 
 int sphereRandomNumberRange = 5;
 
+void startPoint() {
+    if (isP1sTurnToServe) {
+        sphereVelocity = glm::vec3(0.25, 0, 1);
+        spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
+    }
+    else {
+        sphereVelocity = glm::vec3(-0.25, 0, -1);
+        spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
+    }
+    sphereAcceleration = glm::vec3(0, -0.028528f, 0);
+    sphereInitialYVelocity = 0.4f;
+
+    shouldRotateSphere = true;
+    isHittingNet = false;
+    sphereBounceAfterHittingNetCount = 0;
+}
+
+void resetTennisBallPosition() {
+    if (isP1sTurnToServe) {
+        spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
+    }
+    else {
+        spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
+    }
+    sphereAcceleration = glm::vec3(0);
+    sphereVelocity = glm::vec3(0);
+    sphereInitialYVelocity = 0.0f;
+
+    shouldRotateSphere = true;
+    isHittingNet = false;
+    sphereBounceAfterHittingNetCount = 0;
+}
+
 bool didHitRacketX(vec3 racketPosition1, vec3 racketPosition2) {
-    float racketWidth = 2.5f;
+    float racketWidth = 1.25f;
     if (spherePosition.z < 0.0f) {
         return (spherePosition.x >= racketPosition1.x - racketWidth
             && spherePosition.x <= racketPosition1.x + racketWidth);
@@ -132,7 +165,11 @@ bool didCrossNet() {
 }
 
 bool didHitNet() {
-    return sphereRadius > abs(spherePosition.z) && spherePosition.y < 10.0f;
+    return abs(spherePosition.z) < (2 * sphereRadius) && spherePosition.y < 5.0f;
+}
+
+bool isOffCourt() {
+    return abs(spherePosition.z) > 40.0f;
 }
 
 void updateSphereVelocity() {
@@ -145,10 +182,11 @@ void updateSphereWhenHitByRacket() {
         sphereVelocity = vec3(-sphereVelocity.x, sphereInitialYVelocity, -sphereVelocity.z);
     }
     else if (sphereRandomNumber  == 3) {
-        sphereVelocity = vec3(0.0f, sphereInitialYVelocity, -sphereVelocity.z);
+        sphereVelocity = vec3(0.01f * ((rand() % 24) - 12), sphereInitialYVelocity, -sphereVelocity.z);
     }
     else if (sphereRandomNumber == 4) {
-        sphereVelocity = vec3(0.0f, -sphereInitialYVelocity, -sphereVelocity.z);
+        sphereVelocity = vec3(0.01f * ((rand() % 24) - 12), sphereInitialYVelocity, -sphereVelocity.z);
+        //sphereVelocity = vec3(0.01f * ((rand() % 50) - 25), 0.0f, -sphereVelocity.z);
     }
     sphereRotationIncrement = -sphereRotationIncrement;
 }
@@ -161,21 +199,28 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
         updateSphereWhenHitByRacket();
     }
 
+    if (isOffCourt()) {
+        //score() based on ball z pos
+        bool didP1Score = spherePosition.z > 0.0f;
+        score(didP1Score, !didP1Score);
+        resetTennisBallPosition();
+    }
+
     if (didHitNet()) {
         sphereVelocity = vec3(0, sphereVelocity.y, 0);
-        //sphereAcceleration = vec3(0);
         isHittingNet = true;
     }
 
     if (didHitCourt()) {
         if (!isHittingNet) {
-            sphereVelocity.y = 1.3f;
+            sphereVelocity.y = 1.0f;
         }
         else {
             if (sphereBounceAfterHittingNetCount > 8) {
-                sphereAcceleration.y = 0;
-                sphereVelocity.y = 0;
-                shouldRotateSphere = false;
+                //score()based on ball z pos (opposite of offcourt)
+                bool didP1Score = spherePosition.z < 0.0f;
+                score(didP1Score, !didP1Score);
+                resetTennisBallPosition();
             }
             else {
                 sphereVelocity.y = -0.75f * sphereVelocity.y;

@@ -51,6 +51,8 @@ extern bool isHittingNet;
 
 extern int sphereBounceAfterHittingNetCount;
 
+extern bool isP1sTurnToServe;
+
 extern glm::mat4 iMat;
 
 extern float lightAngle;
@@ -92,3 +94,4 @@ extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffus
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
 extern void score(bool p1Scored, bool p2Scored);
 extern void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID, glm::vec3 racketPosition1, glm::vec3 racketPosition2);
+extern void startPoint();
