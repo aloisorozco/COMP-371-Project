@@ -21,7 +21,9 @@ float sphereRadius;
 float racketWidth = 1.25f;
 
 float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition);
-void setPositionX( float xValue);
+void setPositionX1(float xValue);
+void setPositionX2(float xValue);
+void updateBotPosition(float ballX, vec3 racketPosition);
 
 
 // Function to generate vertices for the sphere
@@ -117,24 +119,32 @@ float sphereRotationIncrement = 1;
 bool shouldRotateSphere = true;
 bool isHittingNet = false;
 bool isSecondServe = false;
+bool isBotReceive = true;
+bool isServe = true;
 
 int racketHitCount = 0;
 int sphereBounceAfterHittingNetCount = 0;
 int sphereRandomNumberRange = 5;
+
+float ballX = spherePosition.x;
 
 void startPoint() {
     canStartRacketAnimation = true;
     canStartPoint = false;
     racketHitCount = 0;
     if (isP1sTurnToServe) {
+        isBotReceive = true;
         sphereVelocity = glm::vec3(0, 0.5, 0.03);
         spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
-        
+        setPositionX1(-8.0f);
+        setPositionX2(8.0f);
     }
     else {
+        isBotReceive = false;
         sphereVelocity = glm::vec3(0, 0.5, -0.03);
         spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
-        setPositionX(-8.0f);
+        setPositionX1(-8.0f);
+        setPositionX2(8.0f);
     }
     sphereAcceleration = glm::vec3(0, -0.028528f, 0);
     sphereInitialYVelocity = 0.4f;
@@ -146,13 +156,18 @@ void startPoint() {
 
 void resetTennisBallPosition() {
     if (isP1sTurnToServe) {
+        isBotReceive = true;
         spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
         playerRacketIndex = 1;
+        setPositionX1(-8.0f);
+        setPositionX2(8.0f);
     }
     else {
+        isBotReceive = false;
         spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
-        setPositionX(-8.0f);
         playerRacketIndex = 0;
+        setPositionX1(- 8.0f);
+        setPositionX2(8.0f);
     }
     sphereAcceleration = glm::vec3(0);
     sphereVelocity = glm::vec3(0);
@@ -162,6 +177,7 @@ void resetTennisBallPosition() {
     isHittingNet = false;
     sphereBounceAfterHittingNetCount = 0;
 
+    isServe = true;
     canStartPoint = true;
     racketHitCount = 0;
 }
@@ -206,17 +222,9 @@ void updateSphereVelocity() {
 
 void updateSphereWhenHitByRacket() {
     int sphereRandomNumber = rand() % sphereRandomNumberRange;
-    float sphereVelocityZ;
-    float sphereVelocityX;
-
-    if (spherePosition.z > 0.0f) {
-        sphereVelocityZ = -1.0f;
-        sphereVelocityX = -0.25f;
-    }
-    else {
-        sphereVelocityZ = 1.0f;
-        sphereVelocityX = 0.25f;
-    }
+    float sphereVelocityZ = -1.0f;
+    float sphereVelocityX = -0.25f;
+    
 
     if (sphereRandomNumber < 3) {
         sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
@@ -225,8 +233,40 @@ void updateSphereWhenHitByRacket() {
         sphereVelocity = vec3(0.01f * ((rand() % 24) - 12), sphereInitialYVelocity, sphereVelocityZ);
     }
     else if (sphereRandomNumber == 4) {
-        sphereVelocity = vec3(0.01f * ((rand() % 50) - 25), 0.0f, sphereVelocityZ);
+        sphereVelocity = vec3(0.01f * ((rand() % 50) - 25), sphereInitialYVelocity, sphereVelocityZ);
     }
+
+    sphereRotationIncrement = -sphereRotationIncrement;
+    racketHitCount++;
+}
+
+void updateSphereWhenHitByRacketBot(vec3 racketPosition) {
+    float sphereVelocityZ = (playerRacketIndex == 0 ? 1.0f : -1.0f);
+    float sphereVelocityX = (playerRacketIndex == 0 ? 0.25f : -0.25f);
+    float multiplier = (playerRacketIndex == 0 ? -0.1 : 0.1f);
+
+    float bottomLeftCorner = -16.0f;
+    float bottomRightCorner = 16.0f;
+
+    float distanceLeft = bottomLeftCorner - racketPosition.x;
+    float distanceRight = bottomLeftCorner - racketPosition.x;
+    
+    float randNum = 0.0f;
+
+    if (isServe) {
+        sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
+    }
+    else if (rand() % 2 == 1) {
+        randNum = multiplier *(rand() % ((int)(distanceLeft) * 10));
+        
+        sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+    }
+    else {
+        randNum = -multiplier * (rand() % ((int)(distanceLeft) * 10));
+        sphereVelocity = vec3( randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+    }
+    cout << randNum;
+    
     sphereRotationIncrement = -sphereRotationIncrement;
     racketHitCount++;
 }
@@ -234,16 +274,29 @@ void updateSphereWhenHitByRacket() {
 void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
 
     updateSphereVelocity();
-    
+
     if (canStartPoint == false && didHitRacketZ(racketPosition1, racketPosition2) && didHitRacketX(racketPosition1, racketPosition2)) {
-        updateSphereWhenHitByRacket();
-      
-        if (spherePosition.z == racketPosition2.z - sphereRadius && spherePosition.x >= racketPosition2.x - racketWidth
-            && spherePosition.x <= racketPosition2.x + racketWidth) {
-            float ballX = finalBallPosition(sphereVelocity, spherePosition);
-            //setPositionX(ballX);
+        
+        if (playerRacketIndex == 1) {
+            //updateSphereWhenHitByRacket();
+            updateSphereWhenHitByRacketBot(racketPosition2);
+            isServe = false;
+        }
+        else {
+            updateSphereWhenHitByRacketBot(racketPosition1);
+            isServe = false;
         }
         
+        
+        if (spherePosition.z <= (racketPosition2.z) && spherePosition.z >= (racketPosition2.z - 1.0f) &&
+            spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth) {
+            isBotReceive = true;
+            ballX = finalBallPosition(sphereVelocity, spherePosition);
+        }
+        else {
+            isBotReceive = false;
+        }
+
         if (playerRacketIndex == 0) {
             playerRacketIndex = 1;
         }
@@ -251,6 +304,11 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             playerRacketIndex = 0;
         }
     }
+
+    if (playerRacketIndex == 0 && isBotReceive) {
+        updateBotPosition(ballX, racketPosition1);
+    }
+    
 
     if (isOffCourt()) {
         bool didP1Score = spherePosition.z > 0.0f;
@@ -312,9 +370,16 @@ mat4 getSphereRotation() {
     return mat4(1.0f);
 }
 
+int doDraw = 0;
+
 void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID, glm::vec3 racketPosition1, glm::vec3 racketPosition2)
 {
-    updateSpherePosition(racketPosition1, racketPosition2);
+    if (doDraw == 0) {
+        doDraw = (doDraw +1 ) % 1;
+        updateSpherePosition(racketPosition1, racketPosition2);
+        
+    }
+    doDraw = (doDraw + 1) % 1;
 
     glm::mat4 sphereModelMatrix = glm::translate(iMat, spherePosition);
     sphereModelMatrix = worldMatrix * sphereModelMatrix * getSphereRotation();
