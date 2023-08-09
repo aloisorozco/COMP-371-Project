@@ -665,20 +665,32 @@ void drawStadium(glm::mat4 worldMatrix, int cubeVao, int cubeVaoRepeat, int scen
 }
 
 
-void drawLightCube(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, glm::vec3 lightPosition)
+void drawLightSphere(glm::mat4 worldMatrix, int sceneShaderProgram, int sphereVao, glm::vec3 lightPosition, std::vector<int> indices, bool isSun, int sunMoonTextureID)
 {
-    noTexture(sceneShaderProgram);
-    glBindVertexArray(cubeVao);
+    glBindVertexArray(sphereVao);
 
-    // Light cube model matrix
-    glm::mat4 lightCubeModelMatrix = glm::rotate(iMat, glm::radians(lightAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, lightPosition) *
-        glm::scale(iMat, glm::vec3(1.0f, 1.0f, 1.0f));
-    lightCubeModelMatrix = worldMatrix * lightCubeModelMatrix;
-    setWorldMatrix(sceneShaderProgram, lightCubeModelMatrix);
+    // Light sphere model matrix
+    glm::mat4 lightSphereModelMatrix = glm::rotate(iMat, glm::radians(lightAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, lightPosition) *
+        glm::scale(iMat, glm::vec3(6.0f, 6.0f, 6.0f));
+    lightSphereModelMatrix = worldMatrix * lightSphereModelMatrix;
+    setWorldMatrix(sceneShaderProgram, lightSphereModelMatrix);
 
-    // Drawing the light cube
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    GLuint skyBoxLocation = glGetUniformLocation(sceneShaderProgram, "isSun");
+    glUniform1i(skyBoxLocation, 1);
+
+    // Drawing the light sphere
+    if (isSun) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 0.1f);
+        setBlend(sceneShaderProgram, 0.5f);
+        setTexture(sceneShaderProgram, sunMoonTextureID, 1, toggleTexture);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+        setTexture(sceneShaderProgram, sunMoonTextureID, 0, toggleTexture);
+    }
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+    glUniform1i(skyBoxLocation, 0);
 }
 
 void drawSkyBox(glm::mat4 worldMatrix, int sceneShaderProgram, int sphereVao, int skyId, std::vector<int> indices) {
@@ -944,6 +956,7 @@ void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
     glBindVertexArray(cubeVao);
     setBlend(shader, 0.1f);
     setTexture(shader, metalTextureID, 1, toggleTexture);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
     setUniqueColor(shader, 0.0f, 0.0f, 0.0f);
 
     // Right Back Post matrix
@@ -1016,4 +1029,56 @@ void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
 
     // Drawing the left front top light
     glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
+    glBindVertexArray(cubeVao);
+    noTexture(shader);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+
+    float treeHeight = 20.0f * scaleFactor;
+
+    // Trunk
+    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
+    trunkModelMatrix = worldMatrix * trunkModelMatrix;
+    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
+    setWorldMatrix(shader, trunkModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf top
+    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
+    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafTopModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf middle
+    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
+    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafMiddleModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf bottom
+    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
+    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafBottomModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void drawTrees(mat4 worldMatrix, int cubeVao, int shader) {
+    drawTree(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
+    drawTree(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);
+    drawTree(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f);
+    drawTree(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f);
+    drawTree(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f);
+    drawTree(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f);
+
+    drawTree(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f);
+    drawTree(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f);
+    drawTree(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
+    drawTree(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
+    drawTree(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
+    drawTree(worldMatrix, cubeVao, shader, 10.0f, 115.0f, 2.1f);
 }

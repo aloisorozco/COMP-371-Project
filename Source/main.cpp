@@ -254,6 +254,8 @@ int main(int argc, char* argv[])
     GLuint standTextureID = loadTexture("../Assets/Textures/stand2.jpg");
     GLuint wallTextureID = loadTexture("../Assets/Textures/wall.jpg");
     GLuint metalTextureID = loadTexture("../Assets/Textures/metal.jpg");
+    GLuint moonTextureID = loadTexture("../Assets/Textures/moon.jpg");
+    GLuint sunTextureID = loadTexture("../Assets/Textures/sun.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -427,7 +429,7 @@ int main(int argc, char* argv[])
         // Light rotation calculations
         glUseProgram(sceneShaderProgram);
         rotationAngle += dt * 0.1f;
-        float sunDistance = 130.0f;  // Adjust this value to set the desired distance
+        float sunDistance = 160.0f;  // Adjust this value to set the desired distance
         float sunX = sunDistance * cos(rotationAngle);
         float sunY = sunDistance * sin(rotationAngle);
         float moonX = sunDistance * cos(rotationAngle + (float)(M_PI));
@@ -633,15 +635,18 @@ int main(int argc, char* argv[])
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
+        // Trees
+        //drawTrees(worldMatrix, cubeVao, sceneShaderProgram);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights
         drawLights(worldMatrix, cubeVao, sceneShaderProgram, metalTextureID);
         // Sphere
         drawSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID, racketPosition1, racketPosition2);
-        // Light Cube
-        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionSun);
-        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionMoon);
+        // Sun
+        drawLightSphere(worldMatrix, sceneShaderProgram, sphereVao, lightPositionSun, indices, true, sunTextureID);
+        // Moon
+        drawLightSphere(worldMatrix, sceneShaderProgram, sphereVao, lightPositionMoon, indices, false, moonTextureID);
         // Model 1
         drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, 0);
         // Model 2
