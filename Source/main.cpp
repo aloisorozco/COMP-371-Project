@@ -248,6 +248,7 @@ int main(int argc, char* argv[])
     GLuint cloudyTextureID = loadTexture("../Assets/Textures/cloudy.jpg");
     GLuint standTextureID = loadTexture("../Assets/Textures/stand2.jpg");
     GLuint wallTextureID = loadTexture("../Assets/Textures/wall.jpg");
+    GLuint metalTextureID = loadTexture("../Assets/Textures/metal.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -431,15 +432,15 @@ int main(int argc, char* argv[])
         GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
         if (rotationAngle > 2 * (float)(M_PI))
         {
-            rotationAngle -= 2*(float)(M_PI);
+            rotationAngle -= 2 * (float)(M_PI);
         }
         else if (rotationAngle < -2 * (float)(M_PI))
         {
-            rotationAngle += 2*(float)(M_PI);
+            rotationAngle += 2 * (float)(M_PI);
         }
 
         // Toggle spotlights at night
-        if (rotationAngle > (7 *(float)(M_PI))/ 8 || rotationAngle < (float)(M_PI) / 8) {
+        if (rotationAngle > (11 *(float)(M_PI))/ 12 || rotationAngle < (float)(M_PI) / 12) {
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), true);
         }
         else {
@@ -450,7 +451,7 @@ int main(int argc, char* argv[])
         vec3 light_intensity;
         if (rotationAngle > (float)(M_PI)) {
             toggleDefaultLight = false;
-            light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp( -sin(rotationAngle), 0.0f, 0.2f), clamp( - sin(rotationAngle), 0.0f, 0.2f));
+            light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f));
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);
@@ -458,7 +459,7 @@ int main(int argc, char* argv[])
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
-            light_intensity = vec3(clamp(sin(rotationAngle) * 1.2f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
+            light_intensity = vec3(clamp(sin(rotationAngle) * 1.4f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
 
             toggleDefaultLight = true;
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
@@ -630,7 +631,7 @@ int main(int argc, char* argv[])
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights
-        drawLights(worldMatrix, cubeVao, sceneShaderProgram);
+        drawLights(worldMatrix, cubeVao, sceneShaderProgram, metalTextureID);
         // Sphere
         drawTennisSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID);
         // Light Cube

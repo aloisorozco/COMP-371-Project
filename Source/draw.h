@@ -909,11 +909,12 @@ void drawScoreboard(glm::mat4 worldMatrix, int cubeVao, int sceneShaderProgram, 
 
 
 
-void drawLights(mat4 worldMatrix, int cubeVao, int shader) {
+void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
 
     glBindVertexArray(cubeVao);
-    noTexture(shader);
-    setUniqueColor(shader, 1.0f, 1.0f, 1.0f);
+    setBlend(shader, 0.1f);
+    setTexture(shader, metalTextureID, 1, toggleTexture);
+    setUniqueColor(shader, 0.0f, 0.0f, 0.0f);
 
     // Right Back Post matrix
     mat4 postScaleMatrix = scale(iMat, glm::vec3(2.0f, 80.0f, 2.0f));
