@@ -800,7 +800,6 @@ int main(int argc, char* argv[])
             setPositionX2(racketPosition2.x + 0.3f);
         }
 
-
         glfwSetKeyCallback(window, key_callback);
 
         // Change camera 

@@ -265,7 +265,6 @@ void updateSphereWhenHitByRacketBot(vec3 racketPosition) {
         randNum = -multiplier * (rand() % ((int)(distanceLeft) * 10));
         sphereVelocity = vec3( randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
     }
-    cout << randNum;
     
     sphereRotationIncrement = -sphereRotationIncrement;
     racketHitCount++;
