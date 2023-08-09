@@ -96,10 +96,10 @@ const std::vector<int> generateSphereIndices(int numSlices, int numStacks) {
 }
 
 
-void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID) 
+void drawTennisSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID) 
 {
 
-    glm::mat4 sphereModelMatrix = glm::translate(iMat, glm::vec3(4.6f, 22.0f, 6.0f));
+    glm::mat4 sphereModelMatrix = glm::translate(iMat, glm::vec3(4.6f, 22.0f, 6.0f)) * glm::scale(iMat, glm::vec3(0.8f, 0.8f, 0.8f));
     sphereModelMatrix = worldMatrix * sphereModelMatrix;
     setWorldMatrix(sceneShaderProgram, sphereModelMatrix);
 
