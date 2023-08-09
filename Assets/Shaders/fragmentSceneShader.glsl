@@ -5,12 +5,27 @@ const float PI = 3.1415926535897932384626433832795;
 uniform vec3 light_color;
 uniform vec3 light_position;
 uniform vec3 light_direction;
+uniform vec3 moon_color = vec3(1.0f);
+uniform vec3 moon_position;
+uniform vec3 moon_direction;
+
 uniform vec3 spotlight_color;
 uniform vec3 spotlight_position;
 uniform vec3 spotlight_direction;
 uniform vec3 radial_light_color;
 uniform vec3 radial_light_position;
 uniform vec3 radial_light_direction;
+
+uniform vec3 light_dir_1;
+uniform vec3 light_pos_1;
+uniform vec3 light_dir_2;
+uniform vec3 light_pos_2;
+uniform vec3 light_dir_3;
+uniform vec3 light_pos_3;
+uniform vec3 light_dir_4;
+uniform vec3 light_pos_4;
+
+uniform vec3 day_vector;
 
 uniform float shading_ambient_strength;
 uniform float shading_diffuse_strength;
@@ -19,8 +34,8 @@ uniform float specularAlpha;
 
 uniform float light_near_plane;
 uniform float light_far_plane;
-uniform float light_cutoff_outer = 0.88;
-uniform float light_cutoff_inner = 0.93;
+uniform float light_cutoff_outer = 0.99;
+uniform float light_cutoff_inner = 0.997;
 
 uniform vec3 view_position;
 
@@ -98,6 +113,7 @@ void main()
     vec3 radial_light_diffuse = vec3(0.0f);
     vec3 radial_light_specular = vec3(0.0f);
     vec3 lightColor = vec3(0.0f);
+
     
     ambient = ambient_color(light_color);
 
@@ -116,15 +132,37 @@ void main()
         lightColor = (specular + diffuse + ambient);
     }
     else {
-        lightColor = ambient;
+        if (useShadows == 1) 
+        {
+            diffuse = shadow_scalar() * diffuse_color(light_color, moon_position);
+            specular = shadow_scalar() * specular_color(light_color, moon_position, specularAlpha);
+        }
+        else 
+        {
+            diffuse = diffuse_color(light_color, moon_position);
+            specular = specular_color(light_color, moon_position, specularAlpha);
+        }
+
+        lightColor = (specular + diffuse + ambient);
     }
 
     if (useSpotlight) {
         spotlight_ambient = ambient_color(spotlight_color) * 0.1;
-        spotlight_diffuse = spotlight_scalar(spotlight_position, spotlight_direction) * diffuse_color(spotlight_color, spotlight_position);
-        spotlight_specular = spotlight_scalar(spotlight_position, spotlight_direction) * specular_color(spotlight_color, spotlight_position, specularAlpha);
+        spotlight_diffuse = clamp(
+            spotlight_scalar(light_pos_1, light_dir_1) * diffuse_color(spotlight_color, light_pos_1) +
+            spotlight_scalar(light_pos_2, light_dir_2) * diffuse_color(spotlight_color, light_pos_2) + 
+            spotlight_scalar(light_pos_3, light_dir_3) * diffuse_color(spotlight_color, light_pos_3) + 
+            spotlight_scalar(light_pos_4, light_dir_4) * diffuse_color(spotlight_color, light_pos_4)
+            , 0.0, 1.0);
+        spotlight_specular = clamp(
+            spotlight_scalar(light_pos_1, light_dir_1) * specular_color(spotlight_color, light_pos_1, specularAlpha) +
+            spotlight_scalar(light_pos_2, light_dir_2) * specular_color(spotlight_color, light_pos_2, specularAlpha) + 
+            spotlight_scalar(light_pos_3, light_dir_3) * specular_color(spotlight_color, light_pos_3, specularAlpha) + 
+            spotlight_scalar(light_pos_4, light_dir_4) * specular_color(spotlight_color, light_pos_4, specularAlpha)
+            , 0.0, 1.0);
 
         lightColor += (spotlight_ambient + spotlight_diffuse + spotlight_specular);
+        lightColor = clamp(lightColor, 0.0f, 1.0f);
     }
 
     if (useRadialLight) {
@@ -143,7 +181,7 @@ void main()
     if (useTexture == 1)
     {
         if (isSkyBox == 1) {
-            finalColor = textureColor.rgb;
+            finalColor = textureColor.rgb * day_vector;
         }   
         else if (isBlended == 0)
         {
