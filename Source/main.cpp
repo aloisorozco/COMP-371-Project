@@ -48,8 +48,7 @@ float lightAngle = 0.0f;
 // Upper arm (model --> upArm acts as the root of the model)
 glm::vec3 upArmScale = glm::vec3(0.5f);
 glm::vec3 upArmPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-float upArmYAngle1 = 0.0f;
-float upArmYAngle2 = 0.0f;
+float upArmYAngle[] = { 0.0f, 0.0f };
 float upArmXAngle1 = 0.0f;
 float upArmXAngle2 = 0.0f;
 int whichRacket;
@@ -64,7 +63,7 @@ glm::vec3 racketColor2 = glm::vec3(0.192f, 0.102f, 1.0f);
 
 // Lower arm
 float lowArmZAngle = 0.0f;
-float lowArmXAngle = 0.0f;
+float lowArmXAngle[] = { 0.0f, 0.0f };
 
 // Racket handle (wrist)
 float wristXAngle = 0.0f;
@@ -105,17 +104,10 @@ float phi = glm::radians(cameraVerticalAngle);
 int fall = -1;
 
 // Tennis ball variables
-glm::vec3 sphereAcceleration = glm::vec3(0);
-glm::vec3 sphereVelocity = glm::vec3(0);
-glm::vec3 spherePosition = spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
-
-float sphereInitialYVelocity = 0.0f;
-
-bool shouldRotateSphere = true;
-bool isHittingNet = false;
-int sphereBounceAfterHittingNetCount = 0;
-
+bool canStartPoint = true;
 bool isP1sTurnToServe = true;
+bool canStartRacketAnimation = false;
+int playerRacketIndex = 1;
 
 //Pi variable
 float rotationAngle =0.0f; 
@@ -267,6 +259,8 @@ int main(int argc, char* argv[])
     GLuint standTextureID = loadTexture("../Assets/Textures/stand2.jpg");
     GLuint wallTextureID = loadTexture("../Assets/Textures/wall.jpg");
     GLuint metalTextureID = loadTexture("../Assets/Textures/metal.jpg");
+    GLuint moonTextureID = loadTexture("../Assets/Textures/moon.jpg");
+    GLuint sunTextureID = loadTexture("../Assets/Textures/sun.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -440,7 +434,7 @@ int main(int argc, char* argv[])
         // Light rotation calculations
         glUseProgram(sceneShaderProgram);
         rotationAngle += dt * 0.1f;
-        float sunDistance = 130.0f;  // Adjust this value to set the desired distance
+        float sunDistance = 160.0f;  // Adjust this value to set the desired distance
         float sunX = sunDistance * cos(rotationAngle);
         float sunY = sunDistance * sin(rotationAngle);
         float moonX = sunDistance * cos(rotationAngle + (float)(M_PI));
@@ -594,8 +588,8 @@ int main(int argc, char* argv[])
         if (toggleGrid)
             drawGridAndAxisShadow(worldMatrix, cubeVao, gridVao, shadowShaderProgram);
         // Models
-        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
-        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
+        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition1, upArmXAngle1, 0);
+        drawModelShadow(worldMatrix, racketGridVao, cubeVao, shadowShaderProgram, racketPosition2, upArmXAngle2, 1);
         // Court
         drawCourtShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Stadium
@@ -646,19 +640,22 @@ int main(int argc, char* argv[])
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
+        // Trees
+        //drawTrees(worldMatrix, cubeVao, sceneShaderProgram);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights
         drawLights(worldMatrix, cubeVao, sceneShaderProgram, metalTextureID);
         // Sphere
         drawSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID, racketPosition1, racketPosition2);
-        // Light Cube
-        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionSun);
-        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionMoon);
+        // Sun
+        drawLightSphere(worldMatrix, sceneShaderProgram, sphereVao, lightPositionSun, indices, true, sunTextureID);
+        // Moon
+        drawLightSphere(worldMatrix, sceneShaderProgram, sphereVao, lightPositionMoon, indices, false, moonTextureID);
         // Model 1
-        drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
+        drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, 0);
         // Model 2
-        drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
+        drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, 1);
         // Temperatures
 
         // Unbind geometry
@@ -708,9 +705,10 @@ int main(int argc, char* argv[])
             upArmPosition = glm::vec3(0.0f);
             upArmXAngle1 = 0.0f;
             upArmXAngle2 = 0.0f;
-            upArmYAngle1 = 0.0f;
-            upArmYAngle2 = 0.0f;
-            lowArmXAngle = 0.0f;
+            upArmYAngle[0] = 0.0f;
+            upArmYAngle[1] = 0.0f;
+            lowArmXAngle[0] = 0.0f;
+            lowArmXAngle[1] = 0.0f;
             lowArmZAngle = 0.0f;
             wristXAngle = 0.0f;
             wristYAngle = 0.0f;

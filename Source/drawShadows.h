@@ -57,7 +57,7 @@ void drawGridAndAxisShadow(glm::mat4 worldMatrix, int cubeVao, int gridVao, int 
 }
 
 // --- DRAWING MAIN MODEL ---
-void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int shadowShaderProgram, glm::vec3 upArmInitialPosition, float upArmXAngle, float upArmYAngle)
+void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int shadowShaderProgram, glm::vec3 upArmInitialPosition, float upArmXAngle, int modelIndex)
 {
     glUseProgram(shadowShaderProgram);
     glBindVertexArray(cubeVao);
@@ -67,7 +67,7 @@ void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int 
     glm::mat4 upperArmTranslate = glm::translate(iMat, upArmInitialPosition + upArmPosition);
     glm::mat4 upperArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
     glm::mat4 upperArmInitialRotation = glm::rotate(iMat, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 upperArmModelMatrix = worldMatrix * upperArmTranslate * upperArmRotation * upperArmInitialRotation * upperArmScale;
     glm::mat4 upperArmHierarchy = upperArmTranslate * upperArmRotation;
     setWorldMatrix(shadowShaderProgram, upperArmModelMatrix);
@@ -79,7 +79,7 @@ void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int 
     // Lower arm cube model matrix
     glm::mat4 lowerArmTranslate = glm::translate(iMat, glm::vec3(1.4336f, 5.2736f, 0.0f) * upArmScale);
     glm::mat4 lowerArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
-    glm::mat4 lowerArmRotation = glm::translate(iMat, glm::vec3(0.0f, -3.07f, 0.0f) * upArmScale) * glm::rotate(iMat, glm::radians(lowArmZAngle), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(iMat, glm::radians(lowArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, glm::vec3(0.0f, 3.07f, 0.0f) * upArmScale);
+    glm::mat4 lowerArmRotation = glm::translate(iMat, glm::vec3(0.0f, -3.07f, 0.0f) * upArmScale) * glm::rotate(iMat, glm::radians(lowArmZAngle), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(iMat, glm::radians(lowArmXAngle[modelIndex]), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, glm::vec3(0.0f, 3.07f, 0.0f) * upArmScale);
     glm::mat4 lowerArmModelMatrix = worldMatrix * upperArmHierarchy * lowerArmTranslate * lowerArmRotation * lowerArmScale;
     glm::mat4 lowerArmHierarchy = lowerArmTranslate * lowerArmRotation;
     setWorldMatrix(shadowShaderProgram, lowerArmModelMatrix);
@@ -464,7 +464,7 @@ void drawStadiumShadow(glm::mat4 worldMatrix, int cubeVao, int shadowShaderProgr
 glm::vec3 sphereShadowPosition = spherePosition;
 
 void updateSphereShadow() {
-    sphereShadowPosition += sphereVelocity;
+    sphereShadowPosition = spherePosition;
 
 
 }

@@ -50,6 +50,7 @@ uniform bool useSpotlight = false;
 uniform bool useRadialLight = false;
 
 uniform int isSkyBox;
+uniform int isSun;
 uniform float blendAlpha;
 
 in vec3 vertexColor;
@@ -185,20 +186,34 @@ void main()
         }   
         else if (isBlended == 0)
         {
-            finalColor = lightColor * textureColor.rgb;
+            if (isSun == 1) {
+                finalColor = clamp(textureColor.rgb * day_vector, 0.1f, 1.0f);
+            }
+            else {
+                finalColor = lightColor * textureColor.rgb;
+            }
         }
         else
         {
-            FragColor = vec4(lightColor, 1.0) * (vec4(textureColor.rgb, blendAlpha) + vec4(vertexColor.rgb, 1.0) * (1.0 - blendAlpha));
-            return;
+            if (isSun == 1) {
+                FragColor =  vec4(light_color, 1.0) * (vec4(textureColor.rgb, blendAlpha) + vec4(vertexColor.rgb, 1.0) * (1.0 - blendAlpha));
+                return;
+            }
+            else {
+                FragColor = vec4(lightColor, 1.0) * (vec4(textureColor.rgb, blendAlpha) + vec4(vertexColor.rgb, 1.0) * (1.0 - blendAlpha));
+                return;
+            }
         }
     }
     else
     {
         if (isSkyBox == 1) 
         {
-            finalColor = vertexColor;
+            finalColor = vertexColor * day_vector;
         } 
+        else if (isSun == 1) {
+            finalColor = vertexColor * light_color;
+        }
         else 
         {
             finalColor = lightColor * vertexColor;
