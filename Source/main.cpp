@@ -1,6 +1,6 @@
 //
 // COMP 371 Final Project
-// Project of André Kasper Kolstad - 40210335
+// Project of AndrÃ© Kasper Kolstad - 40210335
 //            Mathieu La Brie - 40210809
 //            Alois 
 //            Dom 
@@ -364,9 +364,9 @@ int main(int argc, char* argv[])
     int cubeVaoRepeat = createLightTexturedVertexArrayObject(cubeArrayRepeat, sizeof(cubeArrayRepeat));
 
     std::vector<LightTexturedColoredVertex> vertices = generateSphereVertices(1.0f, 30, 30);
-    std::vector<int> tennisIndices = generateSphereIndices(30, 30);
-    std::vector<int> snowIndices = generateSphereIndices(10, 10);
-    int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), tennisIndices.data(), tennisIndices.size());
+    std::vector<int> indices = generateSphereIndices(30, 30);
+    int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), indices.data(), indices.size());
+
 
     // Enabling culling and depth test
     glEnable(GL_CULL_FACE);
@@ -587,7 +587,7 @@ int main(int argc, char* argv[])
         // Net
         drawNetShadow(worldMatrix, netGridVao, cubeVao, shadowShaderProgram);
         // Sphere
-        drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, tennisIndices);
+        drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
         // Unbind geometry
         glBindVertexArray(0);
         
@@ -606,40 +606,37 @@ int main(int argc, char* argv[])
         // Grid and axis
         if (toggleGrid)
             drawGridAndAxis(worldMatrix, cubeVao, gridVao, sceneShaderProgram);
+        // Sky Box
+        if (toggleDefaultLight) {
+            if (fall == 0)
+            {
+                drawRain(worldMatrix, sceneShaderProgram, cubeVao);
+                drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, cloudyTextureID, indices);
+                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(glm::vec3(0.7f)));
+            }
+            else {
+                drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, skyTextureID, indices);
+                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(glm::vec3(1.0f)));
+            }
+        }
+        else {
+            drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, starsTextureID, indices);
+        }
         // Court
         drawCourt(worldMatrix, clayTextureID, grassTextureID, cubeVao, cubeVaoRepeat, sceneShaderProgram);
         // Net
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
-        // Lights
-        drawLights(worldMatrix, cubeVao, sceneShaderProgram);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
+        // Lights
+        drawLights(worldMatrix, cubeVao, sceneShaderProgram);
         // Sphere
-        drawSphere(worldMatrix, sphereVao, sceneShaderProgram, tennisIndices, tennisBallTextureID);
+        drawTennisSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID);
         // Light Cube
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionSun);
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionMoon);
-        // Sky Box
-        if (toggleDefaultLight) {
-            if (fall == 0)
-            {
-                drawRain(worldMatrix, sceneShaderProgram, cubeVao);
-                drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, cloudyTextureID);
-            }
-            else if (fall == 2)
-            {
-                drawSnow(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, woodTextureID);
-                drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, skyTextureID);
-            }
-            else {
-                drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, skyTextureID);
-            }
-        }
-        else {
-            drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, starsTextureID);
-        }
         // Model 1
         drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
         // Model 2

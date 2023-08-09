@@ -79,4 +79,3 @@ extern void noTexture(int sceneShaderProgram);
 extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight, float specularLight, float alpha, int useShadows);
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
 extern void score(bool p1Scored, bool p2Scored);
-extern void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> indices, GLuint tennisBallTextureID);

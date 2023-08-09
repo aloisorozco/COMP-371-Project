@@ -412,7 +412,7 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
 
     // Background ground model matrix
-    glm::mat4 backgroundGroundModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -2.0f, 0.0f)) * glm::scale(iMat, glm::vec3(300.0f, 0.5f, 300.0f));
+    glm::mat4 backgroundGroundModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -2.0f, 0.0f)) * glm::scale(iMat, glm::vec3(500.0f, 0.5f, 500.0f));
     backgroundGroundModelMatrix = worldMatrix * backgroundGroundModelMatrix;
     setWorldMatrix(sceneShaderProgram, backgroundGroundModelMatrix);
 
@@ -635,7 +635,7 @@ void drawStadium(glm::mat4 worldMatrix, int cubeVao, int cubeVaoRepeat, int scen
 }
 
 
-void drawLightCube(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, glm::vec3 lightPosition) 
+void drawLightCube(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, glm::vec3 lightPosition)
 {
     noTexture(sceneShaderProgram);
     glBindVertexArray(cubeVao);
@@ -651,26 +651,27 @@ void drawLightCube(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, g
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void drawSkyBox(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, int skyId) {
+void drawSkyBox(glm::mat4 worldMatrix, int sceneShaderProgram, int sphereVao, int skyId, std::vector<int> indices) {
     // We want to see the inside of the sky box
     glCullFace(GL_FRONT);
     // Sky box matrix
-    glm::mat4 cubeWorldMatrix = glm::translate(iMat, glm::vec3(0.0f, 0.0f, 0.0f)) * glm::scale(iMat, glm::vec3(300.0f, 300.0f, 300.0f));
-    cubeWorldMatrix = worldMatrix * cubeWorldMatrix;
+    glm::mat4 skyBoxWorldMatrix = glm::translate(iMat, glm::vec3(0.0f, -50.0f, 0.0f)) * glm::rotate(iMat, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::scale(iMat, glm::vec3(220.0f, 220.0f, 220.0f));
+    skyBoxWorldMatrix = worldMatrix * skyBoxWorldMatrix;
 
     GLuint skyBoxLocation = glGetUniformLocation(sceneShaderProgram, "isSkyBox");
     glUniform1i(skyBoxLocation, 1);
 
     // Drawing the sky box
-    glBindVertexArray(cubeVao);
-    setWorldMatrix(sceneShaderProgram, cubeWorldMatrix);
+    glBindVertexArray(sphereVao);
+    setWorldMatrix(sceneShaderProgram, skyBoxWorldMatrix);
     setUniqueColor(sceneShaderProgram, 0.294f, 0.6745f, 0.925f);
     setTexture(sceneShaderProgram, skyId, 0, toggleTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glUniform1i(skyBoxLocation, 0);
-    glCullFace(GL_BACK);
+   glCullFace(GL_BACK);
 }
 
 
