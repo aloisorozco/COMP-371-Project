@@ -41,8 +41,6 @@ float velocity = 0.0;
 float zoom = -60.0;
 float pan = 0.0;
 float tilt = 0.0;
-float hailsize = 0.1;
-
 int loop;
 
 
@@ -78,9 +76,9 @@ void initParticles(int i) {
     par_sys[i].ypos = -10.0f;
     par_sys[i].zpos = (float)(rand() % 300) - 150;
 
-    par_sys[i].red = 1.0f;
+    par_sys[i].red = 0.0f;
     par_sys[i].green = 0.0f;
-    par_sys[i].blue = 0.0f;
+    par_sys[i].blue = 1.0f;
 
     par_sys[i].vel = velocity;
     par_sys[i].gravity = -0.8;
@@ -94,20 +92,16 @@ void drawRain(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao)
     for (loop = 0; loop < MAX_PARTICLES; loop = loop + 2) {
         if (par_sys[loop].alive == true) {
             x = par_sys[loop].xpos;
-            y = par_sys[loop].ypos;
-            z = par_sys[loop].zpos + zoom;
+            y = par_sys[loop].ypos + 50.0f;
+            z = par_sys[loop].zpos;
 
-            glm::mat4 rainMatrix = worldMatrix * glm::scale(iMat, glm::vec3(2.0f, 1.0f, 2.0f));
+            glm::mat4 rainMatrix = worldMatrix * glm::translate(iMat, glm::vec3(x, y, z)) * glm::scale(iMat, glm::vec3(0.03f, 300.0f, 0.03f));
 
             // Draw particles
             glBindVertexArray(cubeVao);
             setWorldMatrix(sceneShaderProgram, rainMatrix);
-            setUniqueColor(sceneShaderProgram, par_sys[loop].red, par_sys[loop].blue, par_sys[loop].green);
-            glBegin(GL_LINES);
-            glVertex3f(x, y, z);
-            glVertex3f(x, y + 160.0f, z);
-            glColor3f(par_sys[loop].red, par_sys[loop].blue, par_sys[loop].green);
-            glEnd();
+            setUniqueColor(sceneShaderProgram, par_sys[loop].red, par_sys[loop].green, par_sys[loop].blue);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
             glBindVertexArray(0);
 
             // Update values
@@ -130,91 +124,28 @@ void drawRain(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao)
     }
 }
 
-// For Hail
-void drawHail() 
-{
-    float x, y, z;
-
-    for (loop = 0; loop < MAX_PARTICLES; loop = loop + 2) {
-        if (par_sys[loop].alive == true) {
-            x = par_sys[loop].xpos;
-            y = par_sys[loop].ypos;
-            z = par_sys[loop].zpos + zoom;
-
-            // Draw particles
-            glColor3f(0.8, 0.8, 0.9);
-            glBegin(GL_QUADS);
-            // Front
-            glVertex3f(x - hailsize, y - hailsize, z + hailsize); // lower left
-            glVertex3f(x - hailsize, y + hailsize, z + hailsize); // upper left
-            glVertex3f(x + hailsize, y + hailsize, z + hailsize); // upper right
-            glVertex3f(x + hailsize, y - hailsize, z + hailsize); // lower left
-            //Left
-            glVertex3f(x - hailsize, y - hailsize, z + hailsize);
-            glVertex3f(x - hailsize, y - hailsize, z - hailsize);
-            glVertex3f(x - hailsize, y + hailsize, z - hailsize);
-            glVertex3f(x - hailsize, y + hailsize, z + hailsize);
-            // Back
-            glVertex3f(x - hailsize, y - hailsize, z - hailsize);
-            glVertex3f(x - hailsize, y + hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y + hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y - hailsize, z - hailsize);
-            //Right
-            glVertex3f(x + hailsize, y + hailsize, z + hailsize);
-            glVertex3f(x + hailsize, y + hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y - hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y - hailsize, z + hailsize);
-            //Top
-            glVertex3f(x - hailsize, y + hailsize, z + hailsize);
-            glVertex3f(x - hailsize, y + hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y + hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y + hailsize, z + hailsize);
-            //Bottom
-            glVertex3f(x - hailsize, y - hailsize, z + hailsize);
-            glVertex3f(x - hailsize, y - hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y - hailsize, z - hailsize);
-            glVertex3f(x + hailsize, y - hailsize, z + hailsize);
-            glEnd();
-
-            // Update values
-            //Move
-            if (par_sys[loop].ypos <= -10) {
-                par_sys[loop].vel = par_sys[loop].vel * -1.0;
-            }
-            par_sys[loop].ypos += par_sys[loop].vel / (slowdown * 1000); // * 1000
-            par_sys[loop].vel += par_sys[loop].gravity;
-
-            // Decay
-            par_sys[loop].life -= par_sys[loop].fade;
-
-            //Revive
-            if (par_sys[loop].life < 0.0) {
-                initParticles(loop);
-            }
-        }
-    }
-}
-
 // For Snow
-void drawSnow(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, std::vector<int> snowIndices, GLuint snowTextureID)
+void drawSnow(glm::mat4 worldMatrix, int sceneShaderProgram, int sphereVao, std::vector<int> indices)
 {
     float x, y, z;
     for (loop = 0; loop < MAX_PARTICLES; loop = loop + 2) {
         if (par_sys[loop].alive == true) {
             x = par_sys[loop].xpos;
-            y = par_sys[loop].ypos;
-            z = par_sys[loop].zpos + zoom;
+            y = par_sys[loop].ypos + 50.0f;
+            z = par_sys[loop].zpos;
+
+            glm::mat4 snowMatrix = worldMatrix * glm::translate(iMat, glm::vec3(x, y, z)) * glm::scale(iMat, glm::vec3(0.3f, 0.3f, 0.3f));
 
             // Draw particles
-            glColor3f(1.0, 1.0, 1.0);
-            glPushMatrix();
-            glTranslatef(x, y, z);
-            drawSphere(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, snowTextureID, glm::vec3(0), glm::vec3(0));
-            glPopMatrix();
+            glBindVertexArray(sphereVao);
+            setWorldMatrix(sceneShaderProgram, snowMatrix);
+            setUniqueColor(sceneShaderProgram, 1.0f, 0.0f, 0.0f);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
 
             // Update values
             //Move
-            par_sys[loop].ypos += par_sys[loop].vel / (slowdown * 1000);
+            par_sys[loop].ypos += par_sys[loop].vel / (slowdown * 100000);
             par_sys[loop].vel += par_sys[loop].gravity;
             // Decay
             par_sys[loop].life -= par_sys[loop].fade;

@@ -281,7 +281,7 @@ void drawNetShadow(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int shado
     glUseProgram(shadowShaderProgram);
     glBindVertexArray(cubeVao);
     // Net right post model matrix
-    glm::mat4 netRightModelMatrix = glm::translate(iMat, glm::vec3(17.0f, 5.0f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 12.0f, 2.0f));
+    glm::mat4 netRightModelMatrix = glm::translate(iMat, glm::vec3(20.0f, 3.0f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 8.5f, 1.0f));
     netRightModelMatrix = worldMatrix * netRightModelMatrix;
     setWorldMatrix(shadowShaderProgram, netRightModelMatrix);
 
@@ -289,7 +289,7 @@ void drawNetShadow(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int shado
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net left post model matrix
-    glm::mat4 netLeftModelMatrix = glm::translate(iMat, glm::vec3(-17.0f, 5.0f, 0.0f)) * glm::scale(iMat, glm::vec3(2.0f, 12.0f, 2.0f));
+    glm::mat4 netLeftModelMatrix = glm::translate(iMat, glm::vec3(-20.0f, 3.0f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 8.5f, 1.0f));
     netLeftModelMatrix = worldMatrix * netLeftModelMatrix;
     setWorldMatrix(shadowShaderProgram, netLeftModelMatrix);
 
@@ -297,7 +297,7 @@ void drawNetShadow(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int shado
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net top model matrix
-    glm::mat4 netTopModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 10.0f, 0.0f)) * glm::scale(iMat, glm::vec3(32.0f, 2.0f, 0.2f));
+    glm::mat4 netTopModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 6.0f, 0.0f)) * glm::scale(iMat, glm::vec3(40.0f, 1.0f, 0.2f));
     netTopModelMatrix = worldMatrix * netTopModelMatrix;
     setWorldMatrix(shadowShaderProgram, netTopModelMatrix);
 
@@ -305,7 +305,7 @@ void drawNetShadow(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int shado
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net bottom model matrix
-    glm::mat4 netBottomModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 3.0f, 0.0f)) * glm::scale(iMat, glm::vec3(32.0f, 0.5f, 0.2f));
+    glm::mat4 netBottomModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 1.5f, 0.0f)) * glm::scale(iMat, glm::vec3(40.0f, 0.5f, 0.2f));
     netBottomModelMatrix = worldMatrix * netBottomModelMatrix;
     setWorldMatrix(shadowShaderProgram, netBottomModelMatrix);
 
@@ -313,7 +313,7 @@ void drawNetShadow(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int shado
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net middle model matrix
-    glm::mat4 netMiddleModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 7.0f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 8.0f, 0.2f));
+    glm::mat4 netMiddleModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 3.5f, 0.0f)) * glm::scale(iMat, glm::vec3(1.0f, 4.5f, 0.2f));
     netMiddleModelMatrix = worldMatrix * netMiddleModelMatrix;
     setWorldMatrix(shadowShaderProgram, netMiddleModelMatrix);
 
@@ -321,7 +321,7 @@ void drawNetShadow(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int shado
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net grid model matrix
-    glm::mat4 netGridModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 7.0f, 0.0f)) * glm::scale(iMat, glm::vec3(17.0f, 3.8f, 1.0f));
+    glm::mat4 netGridModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 3.5f, 0.0f)) * glm::scale(iMat, glm::vec3(20.0f, 2.0f, 1.0f));
     netGridModelMatrix = worldMatrix * netGridModelMatrix;
     setWorldMatrix(shadowShaderProgram, netGridModelMatrix);
 

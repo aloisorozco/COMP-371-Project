@@ -1,6 +1,6 @@
 //
 // COMP 371 Final Project
-// Project of André Kasper Kolstad - 40210335
+// Project of AndrÃ© Kasper Kolstad - 40210335
 //            Mathieu La Brie - 40210809
 //            Alois 
 //            Dom 
@@ -45,7 +45,7 @@ glm::mat4 iMat = glm::mat4(1.0f);
 float lightAngle = 0.0f;
 
 // Upper arm (model --> upArm acts as the root of the model)
-glm::vec3 upArmScale = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 upArmScale = glm::vec3(0.5f);
 glm::vec3 upArmPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 float upArmYAngle1 = 0.0f;
 float upArmYAngle2 = 0.0f;
@@ -114,6 +114,9 @@ bool shouldRotateSphere = true;
 bool isHittingNet = false;
 int sphereBounceAfterHittingNetCount = 0;
 
+//Pi variable
+float rotationAngle =0.0f; 
+float pi = (float)(M_PI);
 
 // Rendering of model
 GLenum renderModeModel = GL_TRIANGLES;
@@ -253,6 +256,10 @@ int main(int argc, char* argv[])
     GLuint grassTextureID = loadTexture("../Assets/Textures/grass.jpg");
     GLuint starsTextureID = loadTexture("../Assets/Textures/stars.jpg");
     GLuint woodTextureID = loadTexture("../Assets/Textures/wood.jpg");
+    GLuint cloudyTextureID = loadTexture("../Assets/Textures/cloudy.jpg");
+    GLuint standTextureID = loadTexture("../Assets/Textures/stand2.jpg");
+    GLuint wallTextureID = loadTexture("../Assets/Textures/wall.jpg");
+    GLuint metalTextureID = loadTexture("../Assets/Textures/metal.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -302,9 +309,7 @@ int main(int argc, char* argv[])
     worldXAngle = 0.0f;
 
     // Light position
-    float lightPosX = 30.0f;
-    float lightPosY = 83.0f;
-    float lightPosZ = 1.0f;
+    vec3 lightPositionSun = vec3(30.0f, 83.0f, 1.0f);
 
     // Frame time
     float lastFrameTime = glfwGetTime();
@@ -370,10 +375,10 @@ int main(int argc, char* argv[])
     int cubeVao = createLightTexturedVertexArrayObject(cubeArray, sizeof(cubeArray));
     int cubeVaoRepeat = createLightTexturedVertexArrayObject(cubeArrayRepeat, sizeof(cubeArrayRepeat));
 
-    std::vector<LightTexturedColoredVertex> vertices = generateSphereVertices(2.0f, 30, 30);
-    std::vector<int> tennisIndices = generateSphereIndices(30, 30);
-    std::vector<int> snowIndices = generateSphereIndices(10, 10);
-    int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), tennisIndices.data(), tennisIndices.size());
+    std::vector<LightTexturedColoredVertex> vertices = generateSphereVertices(1.0f, 30, 30);
+    std::vector<int> indices = generateSphereIndices(30, 30);
+    int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), indices.data(), indices.size());
+
 
     // Enabling culling and depth test
     glEnable(GL_CULL_FACE);
@@ -425,43 +430,132 @@ int main(int argc, char* argv[])
             initParticles(loop);
         }
 
+        // Light rotation calculations
+        glUseProgram(sceneShaderProgram);
+        rotationAngle += dt * 0.1f;
+        float sunDistance = 130.0f;  // Adjust this value to set the desired distance
+        float sunX = sunDistance * cos(rotationAngle);
+        float sunY = sunDistance * sin(rotationAngle);
+        float moonX = sunDistance * cos(rotationAngle + (float)(M_PI));
+        float moonY = sunDistance * sin(rotationAngle + (float)(M_PI));
+
+        // Rotating the light
+        GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
+        if (rotationAngle > 2 * (float)(M_PI))
+        {
+            rotationAngle -= 2 * (float)(M_PI);
+        }
+        else if (rotationAngle < -2 * (float)(M_PI))
+        {
+            rotationAngle += 2 * (float)(M_PI);
+        }
+
+        // Toggle spotlights at night
+        if (rotationAngle > (11 *(float)(M_PI))/ 12 || rotationAngle < (float)(M_PI) / 12) {
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), true);
+        }
+        else {
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), false);
+        }
+        
+        // Night and day
+        vec3 light_intensity;
+        if (rotationAngle > (float)(M_PI)) {
+            toggleDefaultLight = false;
+            light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f));
+            glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);
+            
+        }
+        else {
+            vec3 day_vector = vec3(sin(rotationAngle));
+            light_intensity = vec3(clamp(sin(rotationAngle) * 1.4f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
+
+            toggleDefaultLight = true;
+            glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
+            
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(sin(rotationAngle))));
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), true);
+        }
+
+        // Create sun matrix with translation and rotation
+        mat4 sun = glm::translate(glm::mat4(1.0f), glm::vec3(sunX, sunY, 0.0f));
+        sun = glm::rotate(sun, rotationAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+        vec3 lightPositionSun = glm::vec3(sun[3]);
+
         // Light parameters for default light
-        glm::vec3 lightPosition = glm::vec3(lightPosX, lightPosY, lightPosZ);
         glm::vec3 lightFocus(0.0f, 0.0f, -1.0f);
-        glm::vec3 lightDirection = normalize(lightFocus - lightPosition);
+        glm::vec3 lightDirection = normalize(lightFocus - lightPositionSun);
+
+
+        // Create moon matrix with translation and rotation
+        mat4 moon = glm::translate(glm::mat4(1.0f), glm::vec3(moonX, moonY, 0.0f));
+        moon = glm::rotate(moon, (float)(rotationAngle + M_PI), glm::vec3(0.0f, 0.0f, 1.0f));
+        vec3 lightPositionMoon = glm::vec3(moon[3]);
+
+        vec3 moonDirection = normalize(lightFocus - lightPositionMoon);
 
         float lightNearPlane = 0.01f;
         float lightFarPlane = 400.0f;
 
         glm::mat4 lightProjMatrix = glm::ortho(-65.0f, 65.0f, -65.0f, 65.0f, lightNearPlane, lightFarPlane);
-        glm::mat4 lightViewMatrix = glm::lookAt(lightPosition, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        glUseProgram(sceneShaderProgram);
-
-        GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
+        // Light matrices
         if (toggleDefaultLight) {
-            glUniform3fv(lightIntensityLocation, 1, value_ptr(glm::vec3(1.0f)));
+            lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_position"), 1, value_ptr(lightPositionSun));
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_direction"), 1, value_ptr(lightDirection));
         }
         else {
-            glUniform3fv(lightIntensityLocation, 1, value_ptr(glm::vec3(0.3f)));
+            lightViewMatrix = glm::lookAt(lightPositionMoon, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "moon_position"), 1, value_ptr(lightPositionMoon));
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "moon_direction"), 1, value_ptr(moonDirection));
         }
-
-        glUniformMatrix4fv(glGetUniformLocation(sceneShaderProgram, "light_proj_view_matrix"), 1, GL_FALSE, &(lightProjMatrix * lightViewMatrix)[0][0]);
+        
+        glUniformMatrix4fv(glGetUniformLocation(sceneShaderProgram, "light_proj_view_matrix"), 1, GL_FALSE, &(lightProjMatrix* lightViewMatrix)[0][0]);
         glUniform1i(glGetUniformLocation(sceneShaderProgram, "light_near_plane"), lightNearPlane);
         glUniform1i(glGetUniformLocation(sceneShaderProgram, "light_far_plane"), lightFarPlane);
-        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_position"), 1, value_ptr(lightPosition));
-        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_direction"), 1, value_ptr(lightDirection));
         glUniformMatrix4fv(glGetUniformLocation(sceneShaderProgram, "worldMatrix"), 1, GL_FALSE, &worldMatrix[0][0]);
 
-        // Light parameters for spotlight
-        glm::vec3 spotlightPosition = glm::vec3(0.0f, 10.0f, 30.0f); // the location of the light in 3D space: fixed position
-        glm::vec3 spotlightFocus(0.0f, 0.0f, -1.0f);  // the point in 3D space the light "looks" at
-        glm::vec3 spotlightDirection = normalize(spotlightFocus - spotlightPosition);
+
+        // Light parameters for spotlights
+        vec3 light_position = glm::vec3(80.0f, 80.0f, 60.0f); // the location of the light in 3D space: fixed position
+        vec3 spotlightFocus = vec3(10.0f, 0.0f, 10.0f);  // the point in 3D space the light "looks" at
+        vec3 spotlightDirection = normalize(spotlightFocus - light_position);
 
         glUseProgram(sceneShaderProgram);
         glUniform3fv(glGetUniformLocation(sceneShaderProgram, "spotlight_color"), 1, value_ptr(glm::vec3(1.0f)));
-        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "spotlight_position"), 1, value_ptr(spotlightPosition));
-        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "spotlight_direction"), 1, value_ptr(spotlightDirection));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_pos_1"), 1, value_ptr(light_position));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_dir_1"), 1, value_ptr(spotlightDirection));
+
+        light_position = glm::vec3(80.0f, 80.0f, -60.0f); // the location of the light in 3D space: fixed position
+        spotlightFocus = vec3(10.0f, 0.0f, -10.0f);    // the point in 3D space the light "looks" at
+        spotlightDirection = normalize(spotlightFocus - light_position);
+
+        glUseProgram(sceneShaderProgram);
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "spotlight_color"), 1, value_ptr(glm::vec3(1.0f)));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_pos_2"), 1, value_ptr(light_position));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_dir_2"), 1, value_ptr(spotlightDirection));
+
+        light_position = glm::vec3(-80.0f, 80.0f, -60.0f); // the location of the light in 3D space: fixed position
+        spotlightFocus = vec3(-10.0f, 0.0f, -10.0f);    // the point in 3D space the light "looks" at
+        spotlightDirection = normalize(spotlightFocus - light_position);
+
+        glUseProgram(sceneShaderProgram);
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "spotlight_color"), 1, value_ptr(glm::vec3(1.0f)));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_pos_3"), 1, value_ptr(light_position));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_dir_3"), 1, value_ptr(spotlightDirection));
+
+        light_position = glm::vec3(-80.0f, 80.0f, 60.0f); // the location of the light in 3D space: fixed position
+        spotlightFocus = vec3(-10.0f, 0.0f, 10.0f);  // the point in 3D space the light "looks" at
+        spotlightDirection = normalize(spotlightFocus - light_position);
+
+        glUseProgram(sceneShaderProgram);
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "spotlight_color"), 1, value_ptr(glm::vec3(1.0f)));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_pos_4"), 1, value_ptr(light_position));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_dir_4"), 1, value_ptr(spotlightDirection));
 
         // Light parameters for radial light
         glm::vec3 radialLightPosition = radialCameraPosition;
@@ -504,7 +598,7 @@ int main(int argc, char* argv[])
         // Net
         drawNetShadow(worldMatrix, netGridVao, cubeVao, shadowShaderProgram);
         // Sphere
-        drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, tennisIndices);
+        drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
         // Unbind geometry
         glBindVertexArray(0);
         
@@ -523,38 +617,42 @@ int main(int argc, char* argv[])
         // Grid and axis
         if (toggleGrid)
             drawGridAndAxis(worldMatrix, cubeVao, gridVao, sceneShaderProgram);
+        // Sky Box
+        if (toggleDefaultLight) {
+            if (fall == 0)
+            {
+                drawRain(worldMatrix, sceneShaderProgram, cubeVao);
+                drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, cloudyTextureID, indices);
+                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(light_intensity * 0.7f));
+            }
+            else {
+                drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, skyTextureID, indices);
+                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(glm::vec3(light_intensity)));
+            }
+        }
+        else {
+            drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, starsTextureID, indices);
+        }
         // Court
         drawCourt(worldMatrix, clayTextureID, grassTextureID, cubeVao, cubeVaoRepeat, sceneShaderProgram);
         // Net
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
-        drawStadium(worldMatrix, cubeVao, sceneShaderProgram);
+        drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
+        // Lights
+        drawLights(worldMatrix, cubeVao, sceneShaderProgram, metalTextureID);
         // Sphere
         drawSphere(worldMatrix, sphereVao, sceneShaderProgram, tennisIndices, tennisBallTextureID, racketPosition1, racketPosition2);
         // Light Cube
-        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPosition);
-        // Sky Box
-        if (toggleDefaultLight) {
-            drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, skyTextureID);
-        }
-        else {
-            drawSkyBox(worldMatrix, sceneShaderProgram, cubeVao, starsTextureID);
-        }
+        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionSun);
+        drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionMoon);
         // Model 1
         drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, upArmYAngle1);
         // Model 2
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
         // Temperatures
-        if (fall == 0) 
-        {
-            drawRain(worldMatrix, sceneShaderProgram, cubeVao);
-        }
-        else if (fall == 2)
-        {
-            drawSnow(worldMatrix, sphereVao, sceneShaderProgram, snowIndices, woodTextureID);
-        }
 
         // Unbind geometry
         glBindVertexArray(0);
@@ -676,11 +774,11 @@ int main(int argc, char* argv[])
         // Light translations
         if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) // move right
         {
-            lightPosX += 0.5; 
+            lightPositionSun.x += 0.5; 
         }
         if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) // move left
         {
-            lightPosX -= 0.5;
+            lightPositionSun.x -= 0.5;
         }
 
 
