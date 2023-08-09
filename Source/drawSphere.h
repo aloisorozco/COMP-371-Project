@@ -53,7 +53,7 @@ const std::vector<LightTexturedColoredVertex> generateSphereVertices(float radiu
             position = glm::vec3(x, y, z);
 
             // color
-            color = glm::vec3(0.0f, 1.0f, 0.0f);
+            color = glm::vec3(1.0f, 1.0f, 1.0f);
 
             // normalized vertex normal (nx, ny, nz)
             nx = x * lengthInv;
@@ -252,6 +252,7 @@ void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, st
     glBindVertexArray(sphereVao);
     setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.2f, 10.0f, toggleShadows);
     setTexture(sceneShaderProgram, tennisBallTextureID, 0, toggleTexture);
+    setUniqueColor(sceneShaderProgram, 0.0f, 1.0f, 0.0f);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
