@@ -13,7 +13,7 @@
 #include <glm/common.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "stb_image.h"
 
 const char* getShaderSource(const std::string& filePath)
 {
