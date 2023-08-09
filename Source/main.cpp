@@ -198,8 +198,11 @@ void setBlend(int sceneShaderProgram, float alphaBlending) {
     glUniform1f(alphaBlendLocation, alphaBlending);
 }
 
-void setPositionX(float xValue) {
+void setPositionX1(float xValue) {
     racketPosition1.x = xValue;
+}
+void setPositionX2(float xValue) {
+    racketPosition2.x = xValue;
 }
 
 // Main function
@@ -784,6 +787,17 @@ int main(int argc, char* argv[])
         if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) // move left
         {
             lightPositionSun.x -= 0.5;
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            setPositionX2(racketPosition2.x - 0.3f);
+        }
+
+        // Rotate model to the right
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            setPositionX2(racketPosition2.x + 0.3f);
         }
 
 

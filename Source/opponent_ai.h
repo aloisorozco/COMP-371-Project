@@ -14,16 +14,20 @@
 #endif
 
 float ballXPosition = 0.0f;
+float botSpeed = 0.3f;
 
-float botPosition() {
+void updateBotPosition(float BallX, vec3 position) {
 
-	return 0.0f;
+	if (BallX <= position.x - 1.25) {
+		setPositionX1(position.x - botSpeed);
+	}
+	else if (BallX >= position.x + 1.25) {
+		setPositionX1(position.x + botSpeed);
+	}
 }
 
-float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition) {
-	//cout << sphereVelocity.z;
 
+float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition) {
 	ballXPosition = spherePosition.x + (sphereVelocity.x * 64);
-	//cout << ballXPosition;
 	return ballXPosition;
 }

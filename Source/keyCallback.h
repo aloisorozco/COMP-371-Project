@@ -231,18 +231,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             upArmXAngle2 += 5.0f;
         }
 
-        //if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        //{
-        //    upArmYAngle[0] += 5.0f;
-        //    cout << "upArmYAngle: " << upArmYAngle[0] << "\n";
-        //}
-
-        //// Rotate model to the right
-        //if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        //{
-        //    upArmYAngle[0] -= 5.0f;
-        //    cout << "upArmYAngle: " << upArmYAngle[0] << "\n";
-        //}
+        
 
         //if (whichRacket == 1) 
         //{
