@@ -40,17 +40,7 @@ extern bool p1Scored;
 extern bool p2Scored;
 
 // Tennis ball variables
-extern glm::vec3 sphereAcceleration;
-extern glm::vec3 sphereVelocity;
-extern glm::vec3 spherePosition;
-
-extern float sphereInitialYVelocity;
-
-extern bool shouldRotateSphere;
-extern bool isHittingNet;
-
-extern int sphereBounceAfterHittingNetCount;
-
+extern bool canStartPoint;
 extern bool isP1sTurnToServe;
 
 extern glm::mat4 iMat;

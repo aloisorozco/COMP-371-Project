@@ -104,16 +104,7 @@ float phi = glm::radians(cameraVerticalAngle);
 int fall = -1;
 
 // Tennis ball variables
-glm::vec3 sphereAcceleration = glm::vec3(0);
-glm::vec3 sphereVelocity = glm::vec3(0);
-glm::vec3 spherePosition = spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
-
-float sphereInitialYVelocity = 0.0f;
-
-bool shouldRotateSphere = true;
-bool isHittingNet = false;
-int sphereBounceAfterHittingNetCount = 0;
-
+bool canStartPoint = true;
 bool isP1sTurnToServe = true;
 
 //Pi variable

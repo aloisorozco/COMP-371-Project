@@ -97,7 +97,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     
 
     // Start game
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS && canStartPoint)
     {
         startPoint();
     }
