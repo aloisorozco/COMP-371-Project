@@ -254,8 +254,12 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
 
     if (isOffCourt()) {
         bool didP1Score = spherePosition.z > 0.0f;
-        if (racketHitCount > 1 || isSecondServe) {
+        if (isSecondServe && racketHitCount == 1) {
             score(didP1Score, !didP1Score);
+            isSecondServe = false;
+        }
+        else if (racketHitCount > 1) {
+            score(!didP1Score, didP1Score);
             isSecondServe = false;
         }
         else {
