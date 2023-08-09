@@ -418,6 +418,7 @@ int main(int argc, char* argv[])
             initParticles(loop);
         }
 
+        // Light rotation calculations
         glUseProgram(sceneShaderProgram);
         rotationAngle += dt * 0.1f;
         float sunDistance = 130.0f;  // Adjust this value to set the desired distance
@@ -426,6 +427,7 @@ int main(int argc, char* argv[])
         float moonX = sunDistance * cos(rotationAngle + (float)(M_PI));
         float moonY = sunDistance * sin(rotationAngle + (float)(M_PI));
 
+        // Rotating the light
         GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
         if (rotationAngle > 2 * (float)(M_PI))
         {
@@ -435,9 +437,8 @@ int main(int argc, char* argv[])
         {
             rotationAngle += 2*(float)(M_PI);
         }
-        //cout << rotationAngle;
 
-        
+        // Toggle spotlights at night
         if (rotationAngle > (7 *(float)(M_PI))/ 8 || rotationAngle < (float)(M_PI) / 8) {
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), true);
         }
@@ -445,10 +446,11 @@ int main(int argc, char* argv[])
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), false);
         }
         
+        // Night and day
+        vec3 light_intensity;
         if (rotationAngle > (float)(M_PI)) {
-            //cout << rotationAngle;
             toggleDefaultLight = false;
-            vec3 light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp( -sin(rotationAngle), 0.0f, 0.2f), clamp( - sin(rotationAngle), 0.0f, 0.2f));
+            light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp( -sin(rotationAngle), 0.0f, 0.2f), clamp( - sin(rotationAngle), 0.0f, 0.2f));
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);
@@ -456,7 +458,7 @@ int main(int argc, char* argv[])
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
-            vec3 light_intensity = vec3(clamp(sin(rotationAngle) * 1.2f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
+            light_intensity = vec3(clamp(sin(rotationAngle) * 1.2f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
 
             toggleDefaultLight = true;
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
@@ -482,13 +484,13 @@ int main(int argc, char* argv[])
 
         vec3 moonDirection = normalize(lightFocus - lightPositionMoon);
 
-
         float lightNearPlane = 0.01f;
         float lightFarPlane = 400.0f;
 
         glm::mat4 lightProjMatrix = glm::ortho(-65.0f, 65.0f, -65.0f, 65.0f, lightNearPlane, lightFarPlane);
         glm::mat4 lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
 
+        // Light matrices
         if (toggleDefaultLight) {
             lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_position"), 1, value_ptr(lightPositionSun));
@@ -505,9 +507,6 @@ int main(int argc, char* argv[])
         glUniform1i(glGetUniformLocation(sceneShaderProgram, "light_far_plane"), lightFarPlane);
         glUniformMatrix4fv(glGetUniformLocation(sceneShaderProgram, "worldMatrix"), 1, GL_FALSE, &worldMatrix[0][0]);
 
-
-        
-        
 
         // Light parameters for spotlights
         vec3 light_position = glm::vec3(80.0f, 80.0f, 60.0f); // the location of the light in 3D space: fixed position
@@ -612,11 +611,11 @@ int main(int argc, char* argv[])
             {
                 drawRain(worldMatrix, sceneShaderProgram, cubeVao);
                 drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, cloudyTextureID, indices);
-                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(glm::vec3(0.7f)));
+                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(light_intensity * 0.7f));
             }
             else {
                 drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, skyTextureID, indices);
-                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(glm::vec3(1.0f)));
+                glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_color"), 1, value_ptr(glm::vec3(light_intensity)));
             }
         }
         else {
