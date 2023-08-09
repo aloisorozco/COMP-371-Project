@@ -169,7 +169,6 @@ bool didHitRacketX(vec3 racketPosition1, vec3 racketPosition2) {
 }
 
 bool didHitRacketZ(vec3 racketPosition1, vec3 racketPosition2) {
-    cout << "\nspherePositionZ: " << spherePosition.z << ", racketPositionZ: " << racketPosition2.z;
     
     if (spherePosition.z < 0.0f) {
         return (spherePosition.z >= (racketPosition1.z) && spherePosition.z <= (racketPosition1.z + 1.0f));
