@@ -381,6 +381,19 @@ int main(int argc, char* argv[])
     std::vector<int> indices = generateSphereIndices(30, 30);
     int sphereVao = createSphereVertexArrayObject(vertices.data(), vertices.size() * sizeof(LightTexturedColoredVertex), indices.data(), indices.size());
 
+    //Creation of models for the crowd
+    string modelPath = "../Assets/Models/matt.obj";                 //model file path
+    int modelVertices;                                              //vertices in model
+    GLuint modelVAO = createModelEBO(modelPath, modelVertices);     //creation of VAO
+
+    //Creation of tree models
+    string treePath = "../Assets/Models/Lowpoly_tree_sample.obj";
+    int treeVertices;
+    GLuint treeVAO = createModelEBO(treePath, treeVertices);
+
+    string treePath2 = "../Assets/Models/LowPoly_Tree_v1.obj";
+    int treeVertices2;
+    GLuint treeVAO2 = createModelEBO(treePath2, treeVertices2);
 
     // Enabling culling and depth test
     glEnable(GL_CULL_FACE);
@@ -601,6 +614,12 @@ int main(int argc, char* argv[])
         drawNetShadow(worldMatrix, netGridVao, cubeVao, shadowShaderProgram);
         // Sphere
         drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
+        //Crowd
+        drawCrowdShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
+        // Ball boys
+        drawBallBoyShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
+        // Trees
+        drawTreeShadows(worldMatrix, treeVAO, treeVertices, shadowShaderProgram, 3.0f, -130.0f, -70.0f);
         // Unbind geometry
         glBindVertexArray(0);
         
@@ -656,6 +675,16 @@ int main(int argc, char* argv[])
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, upArmYAngle2);
         // Temperatures
 
+        // Crowd
+        drawCrowd(worldMatrix, modelVAO, modelVertices, sceneShaderProgram, tennisBallTextureID);
+        // Ball Boys
+        drawBallBoys(worldMatrix, modelVAO, modelVertices, sceneShaderProgram, tennisBallTextureID);
+        //Trees
+        drawTrees(worldMatrix, treeVAO, treeVertices, sceneShaderProgram, 4.5f, -130.0f, -70.0f);
+        drawTrees(worldMatrix, treeVAO, treeVertices, sceneShaderProgram, 4.0f, 130.0f, 30.0f);
+        drawTrees(worldMatrix, treeVAO, treeVertices, sceneShaderProgram, 2.5f, 50.0f, -120.0f);
+        drawTrees(worldMatrix, treeVAO, treeVertices, sceneShaderProgram, 3.0f, -70.0f, 120.0f);
+        drawTrees(worldMatrix, treeVAO, treeVertices, sceneShaderProgram, 2.0f, 130.0f, 120.0f);
         // Unbind geometry
         glBindVertexArray(0);
 

@@ -987,3 +987,143 @@ void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
     // Drawing the left front top light
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+
+void drawCrowdRow(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, int textureID, float xVal, float yVal, float rotationAngle, float r, float g, float b) {
+    noTexture(shader);
+    //setTexture(sceneShaderProgram, textureID, 0, toggleTexture);
+    setUniqueColor(shader, r, g, b);
+    glBindVertexArray(personVAO);
+
+    mat4 modelScalingMatrix = scale(iMat, vec3(7.0f, 7.0f, 7.0f));
+    mat4 modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 0.0f));
+    mat4 modelRotationMatrix = rotate(iMat, radians(rotationAngle), vec3(0.0f, 1.0f, 0.0f));
+    mat4 crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 7.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 14.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 21.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 28.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 35.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 42.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 49.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, 56.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -7.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -14.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -21.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -28.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -35.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -42.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -49.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+    modelTranslationMatrix = translate(iMat, vec3(xVal, yVal, -56.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+}
+
+void drawCrowd(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, int textureID) {
+    // Right side
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, textureID, 55.0f, 7.0f, 90.0f, 1.0f, 0.0f, 0.0f);
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, textureID, 65.0f, 12.0f, 90.0f, 0.0f, 1.0f, 0.0f);
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, textureID, 75.0f, 17.0f, 90.0f, 0.5f, 0.5f, 0.0f);
+    
+    // Left Side
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, textureID, -55.0f, 7.0f, -90.0f, 0.75, 0.46, 0.74);
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, textureID, -65.0f, 12.0f, -90.0f, 0.146, 0.783, 0.883);
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, textureID, -75.0f, 17.0f, -90.0f, 0.7654, 0.12, 0.6);
+}
+
+void drawBallBoys(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, int textureID) {
+    noTexture(shader);
+    //setTexture(sceneShaderProgram, textureID, 0, toggleTexture);
+    setUniqueColor(shader, 0.5f, 0.5f, 0.5f);
+    glBindVertexArray(personVAO);
+
+    mat4 modelScalingMatrix = scale(iMat, vec3(7.0f, 7.0f, 7.0f));
+    mat4 modelTranslationMatrix = translate(iMat, vec3(35.0f, 0.0f, 55.0f));
+    mat4 modelRotationMatrix = rotate(iMat, radians(0.0f), vec3(1.0f, 1.0f, 1.0f));
+    mat4 crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+
+   
+    modelTranslationMatrix = translate(iMat, vec3(-35.0f, 0.0f, -55.0f));
+    modelRotationMatrix = rotate(iMat, radians(180.0f), vec3(0.0f, 1.0f, 0.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+}
+
+void drawTrees(mat4 worldMatrix, GLuint treeVAO, int vertices, int shader, float scaleVal, float xVal, float zVal) {
+    noTexture(shader);
+    setUniqueColor(shader, 0.0f, 1.0f, 0.0f);
+    glBindVertexArray(treeVAO);
+
+    mat4 treeScalingMatrix = scale(iMat, vec3(scaleVal, scaleVal, scaleVal));
+    mat4 treeTranslationMatrix = translate(iMat, vec3(xVal, 0.0f, zVal));
+    mat4 treeRotationMatrix = rotate(iMat, radians(0.0f), vec3(1.0f, 1.0f, 1.0f));
+    mat4 treeModelMatrix = worldMatrix * treeTranslationMatrix * treeRotationMatrix * treeScalingMatrix;
+    setWorldMatrix(shader, treeModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+}
