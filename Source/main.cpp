@@ -36,6 +36,7 @@
 #include "loadShadersAndTextures.h"
 #include "drawSphere.h"
 #include "drawShadows.h"
+#include "opponent_ai.h"
 
 // --- Global variables ---
 // Identity matrix
@@ -203,6 +204,10 @@ void setBlend(int sceneShaderProgram, float alphaBlending) {
     glUseProgram(sceneShaderProgram);
     GLuint alphaBlendLocation = glGetUniformLocation(sceneShaderProgram, "blendAlpha");
     glUniform1f(alphaBlendLocation, alphaBlending);
+}
+
+void setPositionX(float xValue) {
+    racketPosition1.x = xValue;
 }
 
 // Main function

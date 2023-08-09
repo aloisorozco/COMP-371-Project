@@ -18,6 +18,11 @@ using namespace glm;
 // ** The code here is inspired by http://www.songho.ca/opengl/gl_sphere.html, shown to us by the TA. **
 
 float sphereRadius;
+float racketWidth = 1.25f;
+
+float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition);
+void setPositionX( float xValue);
+
 
 // Function to generate vertices for the sphere
 const std::vector<LightTexturedColoredVertex> generateSphereVertices(float radius, int numSlices, int numStacks) 
@@ -112,10 +117,12 @@ void startPoint() {
     if (isP1sTurnToServe) {
         sphereVelocity = glm::vec3(0.25, 0, 1);
         spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
+        
     }
     else {
         sphereVelocity = glm::vec3(-0.25, 0, -1);
         spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
+        setPositionX(-8.0f);
     }
     sphereAcceleration = glm::vec3(0, -0.028528f, 0);
     sphereInitialYVelocity = 0.4f;
@@ -128,9 +135,11 @@ void startPoint() {
 void resetTennisBallPosition() {
     if (isP1sTurnToServe) {
         spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
+        
     }
     else {
         spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
+        setPositionX(-8.0f);
     }
     sphereAcceleration = glm::vec3(0);
     sphereVelocity = glm::vec3(0);
@@ -142,7 +151,7 @@ void resetTennisBallPosition() {
 }
 
 bool didHitRacketX(vec3 racketPosition1, vec3 racketPosition2) {
-    float racketWidth = 1.25f;
+    
     if (spherePosition.z < 0.0f) {
         return (spherePosition.x >= racketPosition1.x - racketWidth
             && spherePosition.x <= racketPosition1.x + racketWidth);
@@ -196,7 +205,14 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
     updateSphereVelocity();
     
     if (didHitRacketZ(racketPosition1, racketPosition2) && didHitRacketX(racketPosition1, racketPosition2)) {
+        //cout << "Hit\n";
         updateSphereWhenHitByRacket();
+        
+        if (spherePosition.z == racketPosition2.z - sphereRadius && spherePosition.x >= racketPosition2.x - racketWidth
+            && spherePosition.x <= racketPosition2.x + racketWidth) {
+            float ballX = finalBallPosition(sphereVelocity, spherePosition);
+            //setPositionX(ballX);
+        }
     }
 
     if (isOffCourt()) {
@@ -255,3 +271,5 @@ void drawSphere(glm::mat4 worldMatrix, int sphereVao, int sceneShaderProgram, st
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+
