@@ -103,6 +103,19 @@ float phi = glm::radians(cameraVerticalAngle);
 // Temperature
 int fall = -1;
 
+// Tennis ball variables
+glm::vec3 sphereAcceleration = glm::vec3(0);
+glm::vec3 sphereVelocity = glm::vec3(0);
+glm::vec3 spherePosition = spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
+
+float sphereInitialYVelocity = 0.0f;
+
+bool shouldRotateSphere = true;
+bool isHittingNet = false;
+int sphereBounceAfterHittingNetCount = 0;
+
+bool isP1sTurnToServe = true;
+
 //Pi variable
 float rotationAngle =0.0f; 
 float pi = (float)(M_PI);
@@ -633,7 +646,7 @@ int main(int argc, char* argv[])
         // Lights
         drawLights(worldMatrix, cubeVao, sceneShaderProgram, metalTextureID);
         // Sphere
-        drawTennisSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID);
+        drawSphere(worldMatrix, sphereVao, sceneShaderProgram, indices, tennisBallTextureID, racketPosition1, racketPosition2);
         // Light Cube
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionSun);
         drawLightCube(worldMatrix, sceneShaderProgram, cubeVao, lightPositionMoon);

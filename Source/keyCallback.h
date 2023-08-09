@@ -94,6 +94,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             m = 0;
         }
     }
+    
+
+    // Start game
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+    {
+        startPoint();
+    }
 
     // TEMPORARY
     // P1 scores

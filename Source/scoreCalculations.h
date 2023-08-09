@@ -15,6 +15,8 @@ int setScore1 = 0;
 int setScore2 = 0;
 
 
+
+
 // IMPORTANT: numbers 11 and 12 represents A and d respectively***
 void score(bool p1Scored, bool p2Scored) 
 {
@@ -52,6 +54,7 @@ void score(bool p1Scored, bool p2Scored)
 				score2[0] = 0;
 				score2[1] = 0;
 				setScore1++;
+				isP1sTurnToServe = !isP1sTurnToServe;
 			}
 			break;
 		case 11:
@@ -60,6 +63,7 @@ void score(bool p1Scored, bool p2Scored)
 			score2[0] = 0;
 			score2[1] = 0;
 			setScore1++;
+			isP1sTurnToServe = !isP1sTurnToServe;
 			break;
 		}
 	}
@@ -98,6 +102,7 @@ void score(bool p1Scored, bool p2Scored)
 				score2[0] = 0;
 				score2[1] = 0;
 				setScore2++;
+				isP1sTurnToServe = !isP1sTurnToServe;
 			}
 			break;
 		case 11:
@@ -106,6 +111,7 @@ void score(bool p1Scored, bool p2Scored)
 			score2[0] = 0;
 			score2[1] = 0;
 			setScore2++;
+			isP1sTurnToServe = !isP1sTurnToServe;
 			break;
 		}
 	}

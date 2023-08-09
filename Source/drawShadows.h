@@ -461,9 +461,19 @@ void drawStadiumShadow(glm::mat4 worldMatrix, int cubeVao, int shadowShaderProgr
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+glm::vec3 sphereShadowPosition = spherePosition;
+
+void updateSphereShadow() {
+    sphereShadowPosition += sphereVelocity;
+
+
+}
+
 void drawSphereShadow(glm::mat4 worldMatrix, int sphereVao, int shadowShaderProgram, std::vector<int> indices) {
 
-    glm::mat4 sphereModelMatrix = glm::translate(iMat, glm::vec3(0.0f, 10.0f, 10.0f));
+    updateSphereShadow();
+
+    glm::mat4 sphereModelMatrix = glm::translate(iMat, sphereShadowPosition);
     sphereModelMatrix = worldMatrix * sphereModelMatrix;
     setWorldMatrix(shadowShaderProgram, sphereModelMatrix);
 
