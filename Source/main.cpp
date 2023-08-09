@@ -456,7 +456,7 @@ int main(int argc, char* argv[])
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
-            vec3 light_intensity = vec3(clamp(sin(rotationAngle) * 1.5f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
+            vec3 light_intensity = vec3(clamp(sin(rotationAngle) * 1.2f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
 
             toggleDefaultLight = true;
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
