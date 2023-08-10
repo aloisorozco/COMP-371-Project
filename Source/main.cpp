@@ -301,7 +301,7 @@ int main(int argc, char* argv[])
     // Camera parameters for view transform
     cameraPosition = glm::vec3(0.0f, 20.0f, 30.0f);
     cameraLookAt = glm::vec3(0.0f, 0.0f, 0.0f); // at origin of world
-    radialCameraPosition = glm::vec3(-30.0f, 10.0f, 0.0f);
+    radialCameraPosition = glm::vec3(0.0f, 10.0f, 50.0f);
     radialCameraLookAt = glm::vec3(0.0f, 0.0f, 0.0f); // at origin of world
     glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
@@ -455,11 +455,13 @@ int main(int argc, char* argv[])
         }
 
         // Toggle spotlights at night
-        if (rotationAngle > (11 *(float)(M_PI))/ 12 || rotationAngle < (float)(M_PI) / 12) {
+        if (rotationAngle > (9 *(float)(M_PI))/ 10 || rotationAngle < (float)(M_PI) / 10) {
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), true);
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useRadialLight"), true);
         }
         else {
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), false);
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useRadialLight"), false);
         }
         
         // Night and day
@@ -469,8 +471,7 @@ int main(int argc, char* argv[])
             light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f));
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
-            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);
-            
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);  
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
@@ -563,7 +564,7 @@ int main(int argc, char* argv[])
 
         // Light parameters for radial light
         glm::vec3 radialLightPosition = radialCameraPosition;
-        glm::vec3 radialLightDirection = normalize(glm::vec3(0.0f, -0.01f, 0.0f) - radialCameraPosition);
+        glm::vec3 radialLightDirection = normalize(glm::vec3(0.0f, 25.0f, -100.0f) - radialCameraPosition);
 
         glUniform3fv(glGetUniformLocation(sceneShaderProgram, "radial_light_color"), 1, value_ptr(glm::vec3(1.0f)));
         glUniform3fv(glGetUniformLocation(sceneShaderProgram, "radial_light_position"), 1, value_ptr(radialCameraPosition));
@@ -791,13 +792,13 @@ int main(int argc, char* argv[])
 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            setPositionX2(racketPosition2.x - 0.3f);
+            setPositionX2(racketPosition2.x - 0.5f);
         }
 
         // Rotate model to the right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            setPositionX2(racketPosition2.x + 0.3f);
+            setPositionX2(racketPosition2.x + 0.5f);
         }
 
 

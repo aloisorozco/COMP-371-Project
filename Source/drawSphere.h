@@ -18,7 +18,7 @@ using namespace glm;
 // ** The code here is inspired by http://www.songho.ca/opengl/gl_sphere.html, shown to us by the TA. **
 
 float sphereRadius;
-float racketWidth = 1.25f;
+float racketWidth = 2.25f;
 
 float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition);
 void setPositionX1(float xValue);
@@ -186,7 +186,7 @@ bool didHitRacketX(vec3 racketPosition1, vec3 racketPosition2) {
     
     if (spherePosition.z < 0.0f) {
         return (spherePosition.x >= racketPosition1.x - racketWidth
-            && spherePosition.x <= racketPosition1.x + racketWidth);
+            && spherePosition.x <= racketPosition1.x + (racketWidth + 1.0f));
     }
     return (spherePosition.x >= racketPosition2.x - racketWidth
                 && spherePosition.x <= racketPosition2.x + racketWidth);
@@ -240,32 +240,49 @@ void updateSphereWhenHitByRacket() {
     racketHitCount++;
 }
 
-void updateSphereWhenHitByRacketBot(vec3 racketPosition) {
+void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     float sphereVelocityZ = (playerRacketIndex == 0 ? 1.0f : -1.0f);
     float sphereVelocityX = (playerRacketIndex == 0 ? 0.25f : -0.25f);
     float multiplier = (playerRacketIndex == 0 ? -0.1 : 0.1f);
 
-    float bottomLeftCorner = -16.0f;
-    float bottomRightCorner = 16.0f;
+    float bottomLeftCorner = -20.0f;
+    float bottomRightCorner = 20.0f;
 
-    float distanceLeft = bottomLeftCorner - racketPosition.x;
-    float distanceRight = bottomLeftCorner - racketPosition.x;
+    float distanceLeft = (playerRacketIndex == 0 ? bottomLeftCorner - racketPosition.x : bottomRightCorner - racketPosition.x);
+    float distanceRight = (playerRacketIndex == 0 ? bottomRightCorner - racketPosition.x : bottomLeftCorner - racketPosition.x);
     
     float randNum = 0.0f;
 
     if (isServe) {
-        sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
+        if (rand() % 3 < 2) {
+            sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
+        }
+        else {
+            sphereVelocity = vec3(sphereVelocityX, 0.0f, sphereVelocityZ);
+        }
+        
     }
-    else if (rand() % 2 == 1) {
-        randNum = multiplier *(rand() % ((int)(distanceLeft) * 10));
+    else if (rand() % 10 < 9){
+        if (racketPosition.x - ballX < 0) {
+            randNum = multiplier * (rand() % ((int)(distanceLeft) * 10));
+        }
+        else {
+            randNum = (-multiplier * (rand() % ((int)(distanceRight) * 10)));
+        }
         
         sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
     }
     else {
-        randNum = -multiplier * (rand() % ((int)(distanceLeft) * 10));
-        sphereVelocity = vec3( randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+        randNum = multiplier * (rand() % ((int)(distanceLeft) * 10)) + (-multiplier * (rand() % ((int)(distanceRight) * 10)));
+        if (playerRacketIndex == 0 && isBotReceive) {
+            sphereVelocity = vec3(randNum / 64, 0.0f, sphereVelocityZ);
+        }
+        else {
+            sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+        }
+        
+        
     }
-    cout << randNum;
     
     sphereRotationIncrement = -sphereRotationIncrement;
     racketHitCount++;
@@ -279,11 +296,11 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
         
         if (playerRacketIndex == 1) {
             //updateSphereWhenHitByRacket();
-            updateSphereWhenHitByRacketBot(racketPosition2);
+            updateSphereWhenHitByRacketBot(racketPosition2, spherePosition.x);
             isServe = false;
         }
         else {
-            updateSphereWhenHitByRacketBot(racketPosition1);
+            updateSphereWhenHitByRacketBot(racketPosition1, spherePosition.x);
             isServe = false;
         }
         
