@@ -10,21 +10,7 @@
 
 #include "common.h"
 
-//struct Particle {
-//    glm::vec2 Position, Velocity;
-//    glm::vec4 Color;
-//    float     Life;
-//
-//    Particle()
-//        : Position(0.0f), Velocity(0.0f), Color(1.0f), Life(0.0f) { }
-//};
-
-//	May Ang
-//	mang@ucsc.edu
-//	CS 161 - Animation & Visualization
-//	Final Project - Rain/Hail/Snow Simulation
-
-//source: https://classes.soe.ucsc.edu/cmps161/Winter09/projects/mang/finalproject.html
+//Inspired by: https://classes.soe.ucsc.edu/cmps161/Winter09/projects/mang/finalproject.html
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,9 +32,9 @@ int loop;
 
 typedef struct {
     // Life
-    bool alive;	// is the particle alive?
-    float life;	// particle lifespan
-    float fade; // decay
+    bool alive;	
+    float life;	
+    float fade; 
     // color
     float red;
     float green;
@@ -77,7 +63,7 @@ void initParticles(int i) {
     par_sys[i].zpos = (float)(rand() % 300) - 150;
 
     par_sys[i].red = 0.0f;
-    par_sys[i].green = 0.0f;
+    par_sys[i].green = .0f;
     par_sys[i].blue = 1.0f;
 
     par_sys[i].vel = velocity;
@@ -100,7 +86,7 @@ void drawRain(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao)
             // Draw particles
             glBindVertexArray(cubeVao);
             setWorldMatrix(sceneShaderProgram, rainMatrix);
-            setUniqueColor(sceneShaderProgram, par_sys[loop].red, par_sys[loop].green, par_sys[loop].blue);
+            setUniqueColor(sceneShaderProgram, 0.0f, 0.489f, 1.0f);
             glDrawArrays(GL_TRIANGLES, 0, 36);
             glBindVertexArray(0);
 

@@ -1031,9 +1031,9 @@ void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
+void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor, int trunkTextureID, int leavesTextureID) 
+{
     glBindVertexArray(cubeVao);
-    noTexture(shader);
     setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
 
     float treeHeight = 20.0f * scaleFactor;
@@ -1043,7 +1043,10 @@ void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float 
     trunkModelMatrix = worldMatrix * trunkModelMatrix;
     setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
     setWorldMatrix(shader, trunkModelMatrix);
+    setTexture(shader, trunkTextureID, 0, toggleTexture);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    setTexture(shader, leavesTextureID, 0, toggleTexture);
 
     // Leaf top
     mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
@@ -1067,18 +1070,19 @@ void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void drawTrees(mat4 worldMatrix, int cubeVao, int shader) {
-    drawTree(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
-    drawTree(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);
-    drawTree(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f);
-    drawTree(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f);
-    drawTree(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f);
-    drawTree(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f);
+void drawTrees(mat4 worldMatrix, int cubeVao, int shader, int trunkTextureID, int leavesTextureID) 
+{
+    drawTree(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f, trunkTextureID, leavesTextureID);
 
-    drawTree(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f);
-    drawTree(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f);
-    drawTree(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
-    drawTree(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
-    drawTree(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
-    drawTree(worldMatrix, cubeVao, shader, 10.0f, 115.0f, 2.1f);
+    drawTree(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f, trunkTextureID, leavesTextureID);
 }

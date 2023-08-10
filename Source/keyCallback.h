@@ -31,28 +31,27 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
 
+    // Camera Positions
     if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
     {
-        // First Racket (1)
+        // Player Racket (2)
         if (m == 0)
         {
             // Changing world back to default
             worldXAngle = 0.0f;
             worldYAngle = 0.0f;
 
-            // Angles to look at center of racket 1
-            theta = glm::radians(90.0f);
-            phi = glm::radians(-5.0f);
-            cameraLookAt = glm::vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
+            // Angles to look at center of racket 2
+            cameraLookAtCenter = glm::vec3(0.0f, 2.0f, 0.0f);
 
-            // Camera position to look at racket 1
-            cameraPosition = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition1) + glm::vec3(0.7f, 7.0f, 13.0f);
+            // Camera position to look at racket 2
+            cameraPosition1 = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(-3.0f, 10.0f, 14.0f);
 
-            whichRacket = 1;
+            useCamera1 = true;
+            whichRacket = 2;
             m++;
         }
-
-        // Second Racket (2)
+        // Spectator in stands camera
         else if (m == 1)
         {
             // Changing world back to default
@@ -60,21 +59,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             worldYAngle = 0.0f;
 
             // Angles to look at center of racket 2
-            theta = glm::radians(90.0f);
-            phi = glm::radians(-5.0f);
-            cameraLookAt = glm::vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
+            cameraLookAtCenter = glm::vec3(0.0f, 0.0f, 0.0f);
 
             // Camera position to look at racket 2
-            cameraPosition = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(0.7f, 7.0f, 13.0f);
+            cameraPosition1 = glm::vec3(30.0f, 11.0f, -1.0f);
 
+            useCamera1 = true;
             whichRacket = 2;
             m++;
         }
+        // Drone cameras
         else if (m == 2) {
             // Changing world back to default
             worldXAngle = 0.0f;
             worldYAngle = 0.0f;
 
+            useCamera1 = false;
             useRadialCamera = true;
             m = -1;
         }

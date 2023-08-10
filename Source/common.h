@@ -57,6 +57,7 @@ extern bool toggleSpotlight;
 extern bool toggleRadialLight;
 extern bool useRadialCamera;
 extern bool isSimulation;
+extern bool useCamera1;
 
 extern int sceneShaderProgram;
 extern int shadowShaderProgram;
@@ -67,6 +68,8 @@ extern float worldXAngle;
 extern float worldYAngle;
 extern glm::vec3 cameraPosition;
 extern glm::vec3 cameraLookAt;
+extern glm::vec3 cameraPosition1;
+extern glm::vec3 cameraLookAtCenter;
 extern glm::vec3 radialCameraPosition;
 extern glm::vec3 radialCameraLookAt;
 extern float cameraHorizontalAngle;
