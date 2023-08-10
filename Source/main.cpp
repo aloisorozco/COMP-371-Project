@@ -264,6 +264,8 @@ int main(int argc, char* argv[])
     GLuint metalTextureID = loadTexture("../Assets/Textures/metal.jpg");
     GLuint moonTextureID = loadTexture("../Assets/Textures/moon.jpg");
     GLuint sunTextureID = loadTexture("../Assets/Textures/sun.jpg");
+    GLuint trunkTextureID = loadTexture("../Assets/Textures/trunk.jpg");
+    GLuint leavesTextureID = loadTexture("../Assets/Textures/leaves.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -644,7 +646,7 @@ int main(int argc, char* argv[])
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
         // Trees
-        //drawTrees(worldMatrix, cubeVao, sceneShaderProgram);
+        //drawTrees(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights

@@ -552,3 +552,53 @@ void drawScoreboardShadow(glm::mat4 worldMatrix, int cubeVao, int shadowShaderPr
     drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(-25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore1);
     drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore2);
 }
+
+void drawTreeShadow(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
+    glBindVertexArray(cubeVao);
+
+    float treeHeight = 20.0f * scaleFactor;
+
+    // Trunk
+    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
+    trunkModelMatrix = worldMatrix * trunkModelMatrix;
+    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
+    setWorldMatrix(shader, trunkModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf top
+    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
+    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafTopModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf middle
+    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
+    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafMiddleModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf bottom
+    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
+    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafBottomModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void drawTreesShadow(mat4 worldMatrix, int cubeVao, int shader) {
+    drawTreeShadow(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f);
+
+    drawTreeShadow(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 10.0f, 115.0f, 2.1f);
+}
