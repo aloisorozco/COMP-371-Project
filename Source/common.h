@@ -43,6 +43,8 @@ extern bool canStartPoint;
 extern bool isP1sTurnToServe;
 extern bool canStartRacketAnimation;
 extern int playerRacketIndex;
+extern int racketDirectionMultiplier;
+extern float racketDirectionAngle;
 
 extern glm::mat4 iMat;
 

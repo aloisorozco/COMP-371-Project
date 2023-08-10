@@ -114,6 +114,8 @@ bool canStartPoint = true;
 bool isP1sTurnToServe = true;
 bool canStartRacketAnimation = false;
 int playerRacketIndex = 1;
+int racketDirectionMultiplier = 1;
+float racketDirectionAngle = 0.0f;
 
 //Pi variable
 float rotationAngle =0.0f; 
@@ -828,6 +830,11 @@ int main(int argc, char* argv[])
         {
             if (!isSimulation) {
                 setPositionX2(racketPosition2.x - 0.5f);
+
+                if (spherePosition.z < -0.1f || sphereVelocity.z < 0.0f) {
+                    racketDirectionMultiplier = -1;
+                    racketDirectionAngle = 180.0f;
+                }
             }
         }
 
@@ -836,6 +843,11 @@ int main(int argc, char* argv[])
         {
             if (!isSimulation) {
                 setPositionX2(racketPosition2.x + 0.5f);
+
+                if (spherePosition.z < -0.1f || sphereVelocity.z < 0.0f) {
+                    racketDirectionMultiplier = 1;
+                    racketDirectionAngle = 0.0f;
+                }
             }
         }
 
