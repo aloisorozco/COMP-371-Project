@@ -116,6 +116,8 @@ bool canStartRacketAnimation = false;
 int playerRacketIndex = 1;
 int racketDirectionMultiplier = 1;
 float racketDirectionAngle = 0.0f;
+int botRacketDirectionMultiplier = 1;
+float botRacketDirectionAngle = 0.0f;
 
 //Pi variable
 float rotationAngle =0.0f; 
@@ -838,7 +840,6 @@ int main(int argc, char* argv[])
             }
         }
 
-        // Rotate model to the right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
             if (!isSimulation) {
