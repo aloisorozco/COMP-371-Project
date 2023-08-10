@@ -40,14 +40,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             // Changing world back to default
             worldXAngle = 0.0f;
             worldYAngle = 0.0f;
+            useRadialCamera = false;
+            useCamera1 = true;
 
             // Angles to look at center of racket 2
-            cameraLookAtCenter = glm::vec3(0.0f, 2.0f, 0.0f);
+            cameraLookAtCenter = glm::vec3(0.0f, 6.0f, 0.0f);
 
             // Camera position to look at racket 2
-            cameraPosition1 = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(-3.0f, 10.0f, 14.0f);
+            cameraPosition1 = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(-3.0f, 18.0f, 25.0f);
 
-            useCamera1 = true;
             whichRacket = 2;
             m++;
         }
@@ -59,30 +60,23 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             worldYAngle = 0.0f;
 
             // Angles to look at center of racket 2
-            cameraLookAtCenter = glm::vec3(0.0f, 0.0f, 0.0f);
+            cameraLookAtCenter = glm::vec3(0.0f, 1.0f, 0.0f);
 
             // Camera position to look at racket 2
-            cameraPosition1 = glm::vec3(30.0f, 11.0f, -1.0f);
+            cameraPosition1 = glm::vec3(36.0f, 16.0f, -2.0f);
 
+            useRadialCamera = false;
             useCamera1 = true;
             whichRacket = 2;
             m++;
         }
-        // Drone cameras
+        // High view camera
         else if (m == 2) {
             // Changing world back to default
             worldXAngle = 0.0f;
             worldYAngle = 0.0f;
-
-            useCamera1 = false;
-            useRadialCamera = true;
-            m = -1;
-        }
-        else if (m == -1) {
-            // Changing world back to default
-            worldXAngle = 0.0f;
-            worldYAngle = 0.0f;
             useRadialCamera = false;
+            useCamera1 = false;
 
             // Re-setting angles to default
             theta = glm::radians(90.0f);
@@ -90,7 +84,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             cameraLookAt = glm::vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
 
             // Re-setting camera zoom to default
-            cameraPosition = glm::vec3(0.0f, 20.0f, 30.0f);
+            cameraPosition = glm::vec3(0.0f, 50.0f, 70.0f);
+            m = -1;
+        }
+        // Drone cameras
+        else if (m == -1) {
+
+            // Changing world back to default
+            worldXAngle = 0.0f;
+            worldYAngle = 0.0f;
+
+            useCamera1 = false;
+            useRadialCamera = true;
             m = 0;
         }
     }
@@ -262,99 +267,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         //    }
         //}
      }
-        
-
-    // Rotate lower arm part of model up
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (lowArmZAngle < 60.0f) {
-            lowArmZAngle += 5.0f;
-        }
-    }
-
-    // Rotate lower arm part of model down
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-    {
-        if (lowArmZAngle > -30.0f) {
-            lowArmZAngle -= 5.0f;
-        }
-    }
-
-    // Rotate lower arm part of model forwards
-    //if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-    //{
-    //    if (lowArmXAngle[0] > -30.0f) {
-    //        lowArmXAngle[0] -= 5.0f;
-    //        cout << "lowArmXAngle: " << lowArmXAngle[0] << "\n";
-    //    }
-    //}
-
-    //// Rotate lower arm part of model backwards
-    //if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-    //{
-    //    // Limiting the rotation so that the arm movement is natural
-    //    if (lowArmXAngle[0] < 60.0f) {
-    //        lowArmXAngle[0] += 5.0f;
-    //        cout << "lowArmXAngle: " << lowArmXAngle[0] << "\n";
-    //    }
-    //}
-
-    /*if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-    {
-        canStartRacketAnimation = true;
-    }*/
-
-    // Rotate wrist backwards
-    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
-    {
-        if (wristXAngle > -15.0f) {
-            wristXAngle -= 5.0f;
-        }
-    }
-
-    // Rotate wrist forwards
-    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristXAngle < 15.0f) {
-            wristXAngle += 5.0f;
-        }
-    }
-
-    // Rotate wrist to the left
-    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
-    {
-        if (wristZAngle < 10.0f) {
-            wristZAngle += 5.0f;
-        }
-    }
-
-    // Rotate wrist to the right
-    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristZAngle > -10.0f) {
-            wristZAngle -= 5.0f;
-        }
-    }
-
-    // Rotate wrist on Y axis
-    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
-    {
-        if (wristYAngle > -20.0f) {
-            wristYAngle -= 5.0f;
-        }
-    }
-
-    // Rotate wrist on Y axis
-    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristYAngle < 20.0f) {
-            wristYAngle += 5.0f;
-        }
-    }
 }
 
 // Callback function for window resize events
