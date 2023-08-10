@@ -792,13 +792,17 @@ int main(int argc, char* argv[])
 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            setPositionX2(racketPosition2.x - 0.5f);
+            if (!isSimulation) {
+                setPositionX2(racketPosition2.x - 0.5f);
+            }
         }
 
         // Rotate model to the right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            setPositionX2(racketPosition2.x + 0.5f);
+            if (!isSimulation) {
+                setPositionX2(racketPosition2.x + 0.5f);
+            }
         }
 
 
