@@ -18,10 +18,10 @@ float botSpeed = 0.3f;
 
 void updateBotPosition(float BallX, vec3 position) {
 
-	if (BallX <= position.x - 1.25) {
+	if (BallX <= position.x - 1.0f) {
 		setPositionX1(position.x - botSpeed);
 	}
-	else if (BallX >= position.x + 1.25) {
+	else if (BallX >= position.x + 1.0f) {
 		setPositionX1(position.x + botSpeed);
 	}
 }
