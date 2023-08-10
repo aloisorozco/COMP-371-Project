@@ -87,9 +87,9 @@ int toggleShadows = 1;
 bool toggleDefaultLight = true;
 bool toggleSpotlight = false;
 bool toggleRadialLight = false;
-bool useCamera1;
-bool useRadialCamera;
 bool toggleGrid = false;
+bool useRadialCamera = true;
+bool useCamera1;
 
 // Camera info
 int m = 0;
@@ -318,7 +318,7 @@ int main(int argc, char* argv[])
     cameraLookAt = glm::vec3(0.0f, 0.0f, 0.0f); // at origin of world
     cameraPosition1 = glm::vec3(0.0f);
     cameraLookAtCenter = glm::vec3(0.0f);
-    radialCameraPosition = glm::vec3(-35.0f, 40.0f, 0.0f);
+    radialCameraPosition = glm::vec3(0.0f, 70.0f, 30.0f);
     radialCameraLookAt = glm::vec3(0.0f, 0.0f, 0.0f); // at origin of world
     glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
@@ -433,7 +433,7 @@ int main(int argc, char* argv[])
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
             glUseProgram(0);
 
-            glm::mat4 cameraRotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(dt * 1.2f), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 cameraRotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(dt * 1.8f), glm::vec3(0.0f, 1.0f, 0.0f));
             radialCameraPosition = glm::vec3(cameraRotationMatrix * glm::vec4(radialCameraPosition, 1.0f));
         }
         else if (useCamera1) {
@@ -536,7 +536,7 @@ int main(int argc, char* argv[])
         float lightNearPlane = 0.01f;
         float lightFarPlane = 400.0f;
 
-        glm::mat4 lightProjMatrix = glm::ortho(-65.0f, 65.0f, -65.0f, 65.0f, lightNearPlane, lightFarPlane);
+        glm::mat4 lightProjMatrix = glm::ortho(-80.0f, 80.0f, -80.0f, 80.0f, lightNearPlane, lightFarPlane);
         glm::mat4 lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // Light matrices
