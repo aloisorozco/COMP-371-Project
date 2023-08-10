@@ -217,6 +217,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         {
             upArmPosition.z += 1.0f;
         }
+
+        
     }
 
     else
@@ -266,6 +268,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         //        upArmYAngle[whichRacket] -= 5.0f;
         //    }
         //}
+
+        //set Simulation
+        if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+        {
+            cout << "Set simulation";
+            if(isSimulation){
+                botSpeed = 0.3f;
+                isSimulation = false;
+            }
+            else{
+                startPoint();
+                botSpeed = 0.4f;
+                isSimulation = true;
+            }
+        }
      }
 }
 

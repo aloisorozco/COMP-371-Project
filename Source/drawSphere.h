@@ -24,6 +24,7 @@ float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition);
 void setPositionX1(float xValue);
 void setPositionX2(float xValue);
 void updateBotPosition(float ballX, vec3 racketPosition);
+void updatePlayerPosition(float ballX, vec3 racketPosition);
 
 
 // Function to generate vertices for the sphere
@@ -121,6 +122,7 @@ bool isHittingNet = false;
 bool isSecondServe = false;
 bool isBotReceive = true;
 bool isServe = true;
+bool isSimulation = false;
 
 int racketHitCount = 0;
 int sphereBounceAfterHittingNetCount = 0;
@@ -134,6 +136,7 @@ void startPoint() {
     racketHitCount = 0;
     if (isP1sTurnToServe) {
         isBotReceive = true;
+        playerRacketIndex = 1;
         sphereVelocity = glm::vec3(0, 0.5, 0.03);
         spherePosition = glm::vec3(8.5f, 12.0f, 30.0f);
         setPositionX1(-8.0f);
@@ -141,6 +144,7 @@ void startPoint() {
     }
     else {
         isBotReceive = false;
+        playerRacketIndex = 0;
         sphereVelocity = glm::vec3(0, 0.5, -0.03);
         spherePosition = glm::vec3(-7.0f, 12.0f, -30.0f);
         setPositionX1(-8.0f);
@@ -180,6 +184,10 @@ void resetTennisBallPosition() {
     isServe = true;
     canStartPoint = true;
     racketHitCount = 0;
+
+    if (isSimulation) {
+        startPoint();
+    }
 }
 
 bool didHitRacketX(vec3 racketPosition1, vec3 racketPosition2) {
@@ -220,25 +228,25 @@ void updateSphereVelocity() {
     sphereVelocity.y += sphereAcceleration.y;
 }
 
-void updateSphereWhenHitByRacket() {
-    int sphereRandomNumber = rand() % sphereRandomNumberRange;
-    float sphereVelocityZ = -1.0f;
-    float sphereVelocityX = -0.25f;
-    
-
-    if (sphereRandomNumber < 3) {
-        sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
-    }
-    else if (sphereRandomNumber  == 3) {
-        sphereVelocity = vec3(0.01f * ((rand() % 24) - 12), sphereInitialYVelocity, sphereVelocityZ);
-    }
-    else if (sphereRandomNumber == 4) {
-        sphereVelocity = vec3(0.01f * ((rand() % 50) - 25), sphereInitialYVelocity, sphereVelocityZ);
-    }
-
-    sphereRotationIncrement = -sphereRotationIncrement;
-    racketHitCount++;
-}
+//void updateSphereWhenHitByRacket() {
+//    int sphereRandomNumber = rand() % sphereRandomNumberRange;
+//    float sphereVelocityZ = -1.0f;
+//    float sphereVelocityX = -0.25f;
+//    
+//
+//    if (sphereRandomNumber < 3) {
+//        sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
+//    }
+//    else if (sphereRandomNumber  == 3) {
+//        sphereVelocity = vec3(0.01f * ((rand() % 24) - 12), sphereInitialYVelocity, sphereVelocityZ);
+//    }
+//    else if (sphereRandomNumber == 4) {
+//        sphereVelocity = vec3(0.01f * ((rand() % 50) - 25), sphereInitialYVelocity, sphereVelocityZ);
+//    }
+//
+//    sphereRotationIncrement = -sphereRotationIncrement;
+//    racketHitCount++;
+//}
 
 void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     float sphereVelocityZ = (playerRacketIndex == 0 ? 1.0f : -1.0f);
@@ -254,7 +262,7 @@ void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     float randNum = 0.0f;
 
     if (isServe) {
-        if (rand() % 3 < 2) {
+        if (rand() % 5 < 4) {
             sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
         }
         else {
@@ -274,12 +282,18 @@ void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     }
     else {
         randNum = multiplier * (rand() % ((int)(distanceLeft) * 10)) + (-multiplier * (rand() % ((int)(distanceRight) * 10)));
-        if (playerRacketIndex == 0 && isBotReceive) {
-            sphereVelocity = vec3(randNum / 64, 0.0f, sphereVelocityZ);
+        if (!isSimulation) {
+            if (playerRacketIndex == 0 && isBotReceive) {
+                sphereVelocity = vec3(randNum / 64, 0.0f, sphereVelocityZ);
+            }
+            else {
+                sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+            }
         }
         else {
-            sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+            sphereVelocity = vec3(randNum / 64, 0.0f, sphereVelocityZ);
         }
+        
         
         
     }
@@ -303,15 +317,24 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             updateSphereWhenHitByRacketBot(racketPosition1, spherePosition.x);
             isServe = false;
         }
-        
-        
-        if (spherePosition.z <= (racketPosition2.z) && spherePosition.z >= (racketPosition2.z - 1.0f) &&
+
+        if (isSimulation) {
+            ballX = finalBallPosition(sphereVelocity, spherePosition);
+            if ((spherePosition.z <= (racketPosition2.z) && spherePosition.z >= (racketPosition2.z - 1.0f) &&
+                spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth)) {
+                isBotReceive = true;
+            }
+            else {
+                isBotReceive = false;
+            }
+        }
+        else if (spherePosition.z <= (racketPosition2.z) && spherePosition.z >= (racketPosition2.z - 1.0f) &&
             spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth) {
             isBotReceive = true;
             ballX = finalBallPosition(sphereVelocity, spherePosition);
         }
         else {
-            isBotReceive = false;
+            isBotReceive = false;  
         }
 
         if (playerRacketIndex == 0) {
@@ -322,7 +345,15 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
         }
     }
 
-    if (playerRacketIndex == 0 && isBotReceive) {
+    if (isSimulation && !isServe) {
+        if (playerRacketIndex == 0 && isBotReceive) {
+            updateBotPosition(ballX, racketPosition1);
+        }
+        else {
+            updatePlayerPosition(ballX, racketPosition2);
+        }
+    }
+    else if (playerRacketIndex == 0 && isBotReceive) {
         updateBotPosition(ballX, racketPosition1);
     }
     
@@ -347,7 +378,7 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
         sphereVelocity = vec3(0, sphereVelocity.y, 0);
         isHittingNet = true;
     }
-    else if (didCrossNet() && abs(sphereVelocity.x) == 0.25f) {
+    else if (didCrossNet() ) {
         canStartRacketAnimation = true;
     }
 
