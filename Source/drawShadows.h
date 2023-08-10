@@ -600,5 +600,5 @@ void drawTreesShadow(mat4 worldMatrix, int cubeVao, int shader) {
     drawTreeShadow(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
     drawTreeShadow(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
     drawTreeShadow(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, 10.0f, 115.0f, 2.1f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f);
 }

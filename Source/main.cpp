@@ -19,6 +19,9 @@
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
 
+//#include <irrKlang/include/irrKlang.h>
+//using namespace irrklang;
+
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
                         // initializing OpenGL and binding inputs
 
@@ -84,6 +87,7 @@ int toggleShadows = 1;
 bool toggleDefaultLight = true;
 bool toggleSpotlight = false;
 bool toggleRadialLight = false;
+bool useCamera1;
 bool useRadialCamera;
 bool toggleGrid = false;
 
@@ -93,6 +97,8 @@ float worldXAngle;
 float worldYAngle;
 glm::vec3 cameraPosition;
 glm::vec3 cameraLookAt;
+glm::vec3 cameraPosition1;
+glm::vec3 cameraLookAtCenter;
 glm::vec3 radialCameraPosition;
 glm::vec3 radialCameraLookAt;
 float cameraHorizontalAngle = 90.0f;
@@ -116,6 +122,9 @@ float pi = (float)(M_PI);
 // Rendering of model
 GLenum renderModeModel = GL_TRIANGLES;
 GLenum renderModeRacketGrid = GL_LINES;
+
+// Sound engine
+//ISoundEngine* SoundEngine = createIrrKlangDevice();
 
 // Setting projection matrix depending on shader program
 void setProjectionMatrix(int shaderProgram, glm::mat4 projectionMatrix)
@@ -239,6 +248,10 @@ int main(int argc, char* argv[])
         glfwTerminate();
         return -1;
     }
+    
+    // Start background music
+    //SoundEngine->play2D("../Assets/Audio/good-night.mp3", true);
+
 
     // Load Textures
 #if defined(PLATFORM_OSX)
@@ -303,7 +316,9 @@ int main(int argc, char* argv[])
     // Camera parameters for view transform
     cameraPosition = glm::vec3(0.0f, 20.0f, 30.0f);
     cameraLookAt = glm::vec3(0.0f, 0.0f, 0.0f); // at origin of world
-    radialCameraPosition = glm::vec3(-30.0f, 10.0f, 0.0f);
+    cameraPosition1 = glm::vec3(0.0f);
+    cameraLookAtCenter = glm::vec3(0.0f);
+    radialCameraPosition = glm::vec3(-35.0f, 40.0f, 0.0f);
     radialCameraLookAt = glm::vec3(0.0f, 0.0f, 0.0f); // at origin of world
     glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
@@ -416,6 +431,21 @@ int main(int argc, char* argv[])
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
+            glUseProgram(0);
+
+            glm::mat4 cameraRotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(dt * 1.2f), glm::vec3(0.0f, 1.0f, 0.0f));
+            radialCameraPosition = glm::vec3(cameraRotationMatrix * glm::vec4(radialCameraPosition, 1.0f));
+        }
+        else if (useCamera1) {
+            // Set initial view matrix for shader when using camera
+            viewMatrix = glm::lookAt(cameraPosition1,    // eye
+                cameraLookAtCenter,                      // center
+                cameraUp);                              // up
+
+            setViewMatrix(sceneShaderProgram, viewMatrix);
+
+            glUseProgram(sceneShaderProgram);
+            glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(cameraPosition1));
             glUseProgram(0);
         }
         else {
@@ -599,6 +629,8 @@ int main(int argc, char* argv[])
         drawCourtShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Stadium
         drawStadiumShadow(worldMatrix, cubeVao, shadowShaderProgram);
+        // Trees
+        drawTreesShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Scoreboard
         drawScoreboardShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Net
@@ -646,7 +678,7 @@ int main(int argc, char* argv[])
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
         // Trees
-        //drawTrees(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
+        drawTrees(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights
