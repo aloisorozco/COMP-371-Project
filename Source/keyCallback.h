@@ -31,28 +31,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
 
+    // Camera Positions
     if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
     {
-        // First Racket (1)
+        // Player Racket (2)
         if (m == 0)
         {
             // Changing world back to default
             worldXAngle = 0.0f;
             worldYAngle = 0.0f;
+            useRadialCamera = false;
+            useCamera1 = true;
 
-            // Angles to look at center of racket 1
-            theta = glm::radians(90.0f);
-            phi = glm::radians(-5.0f);
-            cameraLookAt = glm::vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
+            // Angles to look at center of racket 2
+            cameraLookAtCenter = glm::vec3(0.0f, 6.0f, 0.0f);
 
-            // Camera position to look at racket 1
-            cameraPosition = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition1) + glm::vec3(0.7f, 7.0f, 13.0f);
+            // Camera position to look at racket 2
+            cameraPosition1 = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(-3.0f, 18.0f, 25.0f);
 
-            whichRacket = 1;
+            whichRacket = 2;
             m++;
         }
-
-        // Second Racket (2)
+        // Spectator in stands camera
         else if (m == 1)
         {
             // Changing world back to default
@@ -60,29 +60,23 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             worldYAngle = 0.0f;
 
             // Angles to look at center of racket 2
-            theta = glm::radians(90.0f);
-            phi = glm::radians(-5.0f);
-            cameraLookAt = glm::vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
+            cameraLookAtCenter = glm::vec3(0.0f, 1.0f, 0.0f);
 
             // Camera position to look at racket 2
-            cameraPosition = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(0.7f, 7.0f, 13.0f);
+            cameraPosition1 = glm::vec3(36.0f, 16.0f, -2.0f);
 
+            useRadialCamera = false;
+            useCamera1 = true;
             whichRacket = 2;
             m++;
         }
+        // High view camera
         else if (m == 2) {
             // Changing world back to default
             worldXAngle = 0.0f;
             worldYAngle = 0.0f;
-
-            useRadialCamera = true;
-            m = -1;
-        }
-        else if (m == -1) {
-            // Changing world back to default
-            worldXAngle = 0.0f;
-            worldYAngle = 0.0f;
             useRadialCamera = false;
+            useCamera1 = false;
 
             // Re-setting angles to default
             theta = glm::radians(90.0f);
@@ -90,28 +84,27 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             cameraLookAt = glm::vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
 
             // Re-setting camera zoom to default
-            cameraPosition = glm::vec3(0.0f, 20.0f, 30.0f);
+            cameraPosition = glm::vec3(0.0f, 50.0f, 70.0f);
+            m = -1;
+        }
+        // Drone cameras
+        else if (m == -1) {
+
+            // Changing world back to default
+            worldXAngle = 0.0f;
+            worldYAngle = 0.0f;
+
+            useCamera1 = false;
+            useRadialCamera = true;
             m = 0;
         }
     }
     
 
     // Start game
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS && canStartPoint)
     {
         startPoint();
-    }
-
-    // TEMPORARY
-    // P1 scores
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-    {
-        score(true, false);
-    }
-    // P2 scores
-    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-    {
-        score(false, true);
     }
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
@@ -224,6 +217,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         {
             upArmPosition.z += 1.0f;
         }
+
+        
     }
 
     else
@@ -243,121 +238,52 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             upArmXAngle2 += 5.0f;
         }
 
-        if (whichRacket == 1) 
-        {
-            // Rotate model to the left
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            {
-                upArmYAngle1 += 5.0f;
-            }
+        
 
-            // Rotate model to the right
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            {
-                upArmYAngle1 -= 5.0f;
-            }
-        } 
-        if (whichRacket == 2)
-        {
-            // Rotate model to the left
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            {
-                upArmYAngle2 += 5.0f;
-            }
+        //if (whichRacket == 1) 
+        //{
+        //    // Rotate model to the left
+        //    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        //    {
+        //        upArmYAngle[whichRacket] += 5.0f;
+        //    }
 
-            // Rotate model to the right
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            {
-                upArmYAngle2 -= 5.0f;
+        //    // Rotate model to the right
+        //    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        //    {
+        //        upArmYAngle[whichRacket] -= 5.0f;
+        //    }
+        //} 
+        //if (whichRacket == 2)
+        //{
+        //    // Rotate model to the left
+        //    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        //    {
+        //        upArmYAngle[whichRacket] += 5.0f;
+        //    }
+
+        //    // Rotate model to the right
+        //    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        //    {
+        //        upArmYAngle[whichRacket] -= 5.0f;
+        //    }
+        //}
+
+        //set Simulation
+        if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+        {
+            cout << "Set simulation";
+            if(isSimulation){
+                botSpeed = 0.3f;
+                isSimulation = false;
+            }
+            else{
+                startPoint();
+                botSpeed = 0.4f;
+                isSimulation = true;
             }
         }
      }
-        
-
-    // Rotate lower arm part of model up
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (lowArmZAngle < 60.0f) {
-            lowArmZAngle += 5.0f;
-        }
-    }
-
-    // Rotate lower arm part of model down
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-    {
-        if (lowArmZAngle > -30.0f) {
-            lowArmZAngle -= 5.0f;
-        }
-    }
-
-    // Rotate lower arm part of model forwards
-    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-    {
-        if (lowArmXAngle > -30.0f) {
-            lowArmXAngle -= 5.0f;
-        }
-    }
-
-    // Rotate lower arm part of model backwards
-    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (lowArmXAngle < 60.0f) {
-            lowArmXAngle += 5.0f;
-        }
-    }
-
-    // Rotate wrist backwards
-    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
-    {
-        if (wristXAngle > -15.0f) {
-            wristXAngle -= 5.0f;
-        }
-    }
-
-    // Rotate wrist forwards
-    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristXAngle < 15.0f) {
-            wristXAngle += 5.0f;
-        }
-    }
-
-    // Rotate wrist to the left
-    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
-    {
-        if (wristZAngle < 10.0f) {
-            wristZAngle += 5.0f;
-        }
-    }
-
-    // Rotate wrist to the right
-    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristZAngle > -10.0f) {
-            wristZAngle -= 5.0f;
-        }
-    }
-
-    // Rotate wrist on Y axis
-    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
-    {
-        if (wristYAngle > -20.0f) {
-            wristYAngle -= 5.0f;
-        }
-    }
-
-    // Rotate wrist on Y axis
-    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristYAngle < 20.0f) {
-            wristYAngle += 5.0f;
-        }
-    }
 }
 
 // Callback function for window resize events

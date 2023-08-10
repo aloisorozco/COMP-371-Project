@@ -73,18 +73,48 @@ void drawGridAndAxis(glm::mat4 worldMatrix, int cubeVao, int gridVao, int sceneS
     glBindVertexArray(0);
 }
 
+float increaseIncrement = 1.5f;
+
+void updateModel() {
+    
+    //works for P1 need to change for P2 (opposite +/-)
+    if (playerRacketIndex) {
+        upArmYAngle[playerRacketIndex] = upArmYAngle[playerRacketIndex] - increaseIncrement;
+        lowArmXAngle[playerRacketIndex] = lowArmXAngle[playerRacketIndex] + increaseIncrement;
+    }
+    else {
+        upArmYAngle[playerRacketIndex] = upArmYAngle[playerRacketIndex] + increaseIncrement;
+        lowArmXAngle[playerRacketIndex] = lowArmXAngle[playerRacketIndex] - increaseIncrement;
+    }
+    
+    if (abs(upArmYAngle[playerRacketIndex]) == 45.0f) {
+        increaseIncrement = -1.5f;
+    }
+    else if ((upArmYAngle[playerRacketIndex] == 1.5f && playerRacketIndex == 1)
+        || (upArmYAngle[playerRacketIndex] == -1.5f && playerRacketIndex == 0)) {
+        increaseIncrement = 1.5f;
+        upArmYAngle[playerRacketIndex] = 0.0f;
+        lowArmXAngle[playerRacketIndex] = 0.0f;
+        canStartRacketAnimation = false;
+    }
+}
+
 // --- DRAWING MAIN MODEL ---
-void drawModel(glm::mat4 worldMatrix, glm::vec3 racketColor, int racketTextureID, int racketGridVao, int cubeVao, int sceneShaderProgram, glm::vec3 upArmInitialPosition, float upArmXAngle, float upArmYAngle)
+void drawModel(glm::mat4 worldMatrix, glm::vec3 racketColor, int racketTextureID, int racketGridVao, int cubeVao, int sceneShaderProgram, glm::vec3 upArmInitialPosition, float upArmXAngle, int modelIndex)
 {
     glBindVertexArray(cubeVao);
     noTexture(sceneShaderProgram);
+
+    if (canStartRacketAnimation) {
+        updateModel();
+    }
 
     // -- UPPER ARM --
     // Upper arm cube model matrix
     glm::mat4 upperArmTranslate = glm::translate(iMat, upArmInitialPosition + upArmPosition);
     glm::mat4 upperArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
     glm::mat4 upperArmInitialRotation = glm::rotate(iMat, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 upperArmModelMatrix = worldMatrix * upperArmTranslate * upperArmRotation * upperArmInitialRotation * upperArmScale;
     glm::mat4 upperArmHierarchy = upperArmTranslate * upperArmRotation;
     setWorldMatrix(sceneShaderProgram, upperArmModelMatrix);
@@ -99,7 +129,7 @@ void drawModel(glm::mat4 worldMatrix, glm::vec3 racketColor, int racketTextureID
     // Lower arm cube model matrix
     glm::mat4 lowerArmTranslate = glm::translate(iMat, glm::vec3(1.4336f, 5.2736f, 0.0f) * upArmScale);
     glm::mat4 lowerArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
-    glm::mat4 lowerArmRotation = glm::translate(iMat, glm::vec3(0.0f, -3.07f, 0.0f) * upArmScale) * glm::rotate(iMat, glm::radians(lowArmZAngle), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(iMat, glm::radians(lowArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, glm::vec3(0.0f, 3.07f, 0.0f) * upArmScale);
+    glm::mat4 lowerArmRotation = glm::translate(iMat, glm::vec3(0.0f, -3.07f, 0.0f) * upArmScale) * glm::rotate(iMat, glm::radians(lowArmZAngle), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(iMat, glm::radians(lowArmXAngle[modelIndex]), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, glm::vec3(0.0f, 3.07f, 0.0f) * upArmScale);
     glm::mat4 lowerArmModelMatrix = worldMatrix * upperArmHierarchy * lowerArmTranslate * lowerArmRotation * lowerArmScale;
     glm::mat4 lowerArmHierarchy = lowerArmTranslate * lowerArmRotation;
     setWorldMatrix(sceneShaderProgram, lowerArmModelMatrix);
@@ -635,20 +665,32 @@ void drawStadium(glm::mat4 worldMatrix, int cubeVao, int cubeVaoRepeat, int scen
 }
 
 
-void drawLightCube(glm::mat4 worldMatrix, int sceneShaderProgram, int cubeVao, glm::vec3 lightPosition)
+void drawLightSphere(glm::mat4 worldMatrix, int sceneShaderProgram, int sphereVao, glm::vec3 lightPosition, std::vector<int> indices, bool isSun, int sunMoonTextureID)
 {
-    noTexture(sceneShaderProgram);
-    glBindVertexArray(cubeVao);
+    glBindVertexArray(sphereVao);
 
-    // Light cube model matrix
-    glm::mat4 lightCubeModelMatrix = glm::rotate(iMat, glm::radians(lightAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, lightPosition) *
-        glm::scale(iMat, glm::vec3(1.0f, 1.0f, 1.0f));
-    lightCubeModelMatrix = worldMatrix * lightCubeModelMatrix;
-    setWorldMatrix(sceneShaderProgram, lightCubeModelMatrix);
+    // Light sphere model matrix
+    glm::mat4 lightSphereModelMatrix = glm::rotate(iMat, glm::radians(lightAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, lightPosition) *
+        glm::scale(iMat, glm::vec3(6.0f, 6.0f, 6.0f));
+    lightSphereModelMatrix = worldMatrix * lightSphereModelMatrix;
+    setWorldMatrix(sceneShaderProgram, lightSphereModelMatrix);
 
-    // Drawing the light cube
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    GLuint skyBoxLocation = glGetUniformLocation(sceneShaderProgram, "isSun");
+    glUniform1i(skyBoxLocation, 1);
+
+    // Drawing the light sphere
+    if (isSun) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 0.1f);
+        setBlend(sceneShaderProgram, 0.5f);
+        setTexture(sceneShaderProgram, sunMoonTextureID, 1, toggleTexture);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+        setTexture(sceneShaderProgram, sunMoonTextureID, 0, toggleTexture);
+    }
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+    glUniform1i(skyBoxLocation, 0);
 }
 
 void drawSkyBox(glm::mat4 worldMatrix, int sceneShaderProgram, int sphereVao, int skyId, std::vector<int> indices) {
@@ -914,6 +956,7 @@ void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
     glBindVertexArray(cubeVao);
     setBlend(shader, 0.1f);
     setTexture(shader, metalTextureID, 1, toggleTexture);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
     setUniqueColor(shader, 0.0f, 0.0f, 0.0f);
 
     // Right Back Post matrix
@@ -1126,4 +1169,58 @@ void drawTrees(mat4 worldMatrix, GLuint treeVAO, int vertices, int shader, float
     mat4 treeModelMatrix = worldMatrix * treeTranslationMatrix * treeRotationMatrix * treeScalingMatrix;
     setWorldMatrix(shader, treeModelMatrix);
     glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor, int trunkTextureID, int leavesTextureID) 
+{
+    glBindVertexArray(cubeVao);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+
+    float treeHeight = 20.0f * scaleFactor;
+
+    // Trunk
+    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
+    trunkModelMatrix = worldMatrix * trunkModelMatrix;
+    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
+    setWorldMatrix(shader, trunkModelMatrix);
+    setTexture(shader, trunkTextureID, 0, toggleTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    setTexture(shader, leavesTextureID, 0, toggleTexture);
+
+    // Leaf top
+    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
+    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafTopModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf middle
+    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
+    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafMiddleModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf bottom
+    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
+    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafBottomModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void drawTrees(mat4 worldMatrix, int cubeVao, int shader, int trunkTextureID, int leavesTextureID) 
+{
+    drawTree(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f, trunkTextureID, leavesTextureID);
+
+    drawTree(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f, trunkTextureID, leavesTextureID);
+    drawTree(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f, trunkTextureID, leavesTextureID);
 }

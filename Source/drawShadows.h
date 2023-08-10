@@ -57,7 +57,7 @@ void drawGridAndAxisShadow(glm::mat4 worldMatrix, int cubeVao, int gridVao, int 
 }
 
 // --- DRAWING MAIN MODEL ---
-void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int shadowShaderProgram, glm::vec3 upArmInitialPosition, float upArmXAngle, float upArmYAngle)
+void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int shadowShaderProgram, glm::vec3 upArmInitialPosition, float upArmXAngle, int modelIndex)
 {
     glUseProgram(shadowShaderProgram);
     glBindVertexArray(cubeVao);
@@ -67,7 +67,7 @@ void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int 
     glm::mat4 upperArmTranslate = glm::translate(iMat, upArmInitialPosition + upArmPosition);
     glm::mat4 upperArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
     glm::mat4 upperArmInitialRotation = glm::rotate(iMat, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 upperArmModelMatrix = worldMatrix * upperArmTranslate * upperArmRotation * upperArmInitialRotation * upperArmScale;
     glm::mat4 upperArmHierarchy = upperArmTranslate * upperArmRotation;
     setWorldMatrix(shadowShaderProgram, upperArmModelMatrix);
@@ -79,7 +79,7 @@ void drawModelShadow(glm::mat4 worldMatrix, int racketGridVao, int cubeVao, int 
     // Lower arm cube model matrix
     glm::mat4 lowerArmTranslate = glm::translate(iMat, glm::vec3(1.4336f, 5.2736f, 0.0f) * upArmScale);
     glm::mat4 lowerArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
-    glm::mat4 lowerArmRotation = glm::translate(iMat, glm::vec3(0.0f, -3.07f, 0.0f) * upArmScale) * glm::rotate(iMat, glm::radians(lowArmZAngle), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(iMat, glm::radians(lowArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, glm::vec3(0.0f, 3.07f, 0.0f) * upArmScale);
+    glm::mat4 lowerArmRotation = glm::translate(iMat, glm::vec3(0.0f, -3.07f, 0.0f) * upArmScale) * glm::rotate(iMat, glm::radians(lowArmZAngle), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(iMat, glm::radians(lowArmXAngle[modelIndex]), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::translate(iMat, glm::vec3(0.0f, 3.07f, 0.0f) * upArmScale);
     glm::mat4 lowerArmModelMatrix = worldMatrix * upperArmHierarchy * lowerArmTranslate * lowerArmRotation * lowerArmScale;
     glm::mat4 lowerArmHierarchy = lowerArmTranslate * lowerArmRotation;
     setWorldMatrix(shadowShaderProgram, lowerArmModelMatrix);
@@ -464,7 +464,7 @@ void drawStadiumShadow(glm::mat4 worldMatrix, int cubeVao, int shadowShaderProgr
 glm::vec3 sphereShadowPosition = spherePosition;
 
 void updateSphereShadow() {
-    sphereShadowPosition += sphereVelocity;
+    sphereShadowPosition = spherePosition;
 
 
 }
@@ -685,4 +685,53 @@ void drawTreeShadows(mat4 worldMatrix, GLuint treeVAO, int vertices, int shadowS
     mat4 treeModelMatrix = worldMatrix * treeTranslationMatrix * treeRotationMatrix * treeScalingMatrix;
     setWorldMatrix(shadowShaderProgram, treeModelMatrix);
     glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, 0);
+}
+void drawTreeShadow(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
+    glBindVertexArray(cubeVao);
+
+    float treeHeight = 20.0f * scaleFactor;
+
+    // Trunk
+    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
+    trunkModelMatrix = worldMatrix * trunkModelMatrix;
+    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
+    setWorldMatrix(shader, trunkModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf top
+    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
+    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafTopModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf middle
+    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
+    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafMiddleModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf bottom
+    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
+    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafBottomModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void drawTreesShadow(mat4 worldMatrix, int cubeVao, int shader) {
+    drawTreeShadow(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f);
+
+    drawTreeShadow(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
+    drawTreeShadow(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f);
 }
