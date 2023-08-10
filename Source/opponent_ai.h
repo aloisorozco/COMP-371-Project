@@ -26,6 +26,16 @@ void updateBotPosition(float BallX, vec3 position) {
 	}
 }
 
+void updatePlayerPosition(float BallX, vec3 position) {
+
+	if (BallX <= position.x - 1.0f) {
+		setPositionX2(position.x - botSpeed);
+	}
+	else if (BallX >= position.x + 1.0f) {
+		setPositionX2(position.x + botSpeed);
+	}
+}
+
 
 float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition) {
 	ballXPosition = spherePosition.x + (sphereVelocity.x * 64);

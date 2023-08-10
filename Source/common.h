@@ -56,6 +56,7 @@ extern bool toggleDefaultLight;
 extern bool toggleSpotlight;
 extern bool toggleRadialLight;
 extern bool useRadialCamera;
+extern bool isSimulation;
 extern bool useCamera1;
 
 extern int sceneShaderProgram;
@@ -75,6 +76,9 @@ extern float cameraHorizontalAngle;
 extern float cameraVerticalAngle;
 extern float theta;
 extern float phi;
+
+//Move speed
+extern float botSpeed;
 
 extern int fall;
 

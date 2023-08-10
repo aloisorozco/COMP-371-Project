@@ -212,6 +212,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         {
             upArmPosition.z += 1.0f;
         }
+
+        
     }
 
     else
@@ -261,6 +263,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         //        upArmYAngle[whichRacket] -= 5.0f;
         //    }
         //}
+
+        //set Simulation
+        if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+        {
+            cout << "Set simulation";
+            if(isSimulation){
+                botSpeed = 0.3f;
+                isSimulation = false;
+            }
+            else{
+                startPoint();
+                botSpeed = 0.4f;
+                isSimulation = true;
+            }
+        }
      }
         
 
@@ -305,22 +322,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         canStartRacketAnimation = true;
     }*/
 
-    // Rotate wrist backwards
-    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
-    {
-        if (wristXAngle > -15.0f) {
-            wristXAngle -= 5.0f;
-        }
-    }
+    // // Rotate wrist backwards
+    // if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+    // {
+    //     if (wristXAngle > -15.0f) {
+    //         wristXAngle -= 5.0f;
+    //     }
+    // }
 
-    // Rotate wrist forwards
-    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
-    {
-        // Limiting the rotation so that the arm movement is natural
-        if (wristXAngle < 15.0f) {
-            wristXAngle += 5.0f;
-        }
-    }
+    // // Rotate wrist forwards
+    // if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+    // {
+    //     // Limiting the rotation so that the arm movement is natural
+    //     if (wristXAngle < 15.0f) {
+    //         wristXAngle += 5.0f;
+    //     }
+    // }
 
     // Rotate wrist to the left
     if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
