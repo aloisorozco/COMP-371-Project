@@ -1059,11 +1059,11 @@ void drawPerson(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, fl
     setObjMaterial(shader, 0.4f, 0.8f, 0.2f, toggleShadows);
     setWorldMatrix(shader, crowdModelMatrix);
     glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
-
 }
 void drawCrowdRow(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, float rotationAngle, float sideVal) {
     noTexture(shader);
     glUseProgram(shader);
+    noTexture(shader);
 
     // Bottom row
     drawPerson(worldMatrix, personVAO, vertices, shader, 6.0f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -7.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.5f, 0.5f, 0.5f));
@@ -1192,14 +1192,18 @@ void drawIndividualTree(mat4 worldMatrix, GLuint treeVAO, int vertices, int shad
     setObjColor(shader, vec3(0.5451f, 0.27f, 0.0745f));
     setWorldMatrix(shader, treeModelMatrix);
     glDrawElements(GL_TRIANGLES, 330, GL_UNSIGNED_INT, 0);
+  
     // Leaves
     setObjTexture(shader, leaves, toggleTexture);
     setObjMaterial(shader, 0.3f, 0.8f, 0.2f, toggleShadows);
     setObjColor(shader, vec3(0.1882f, 0.27, 0.1607f));
     setWorldMatrix(shader, treeModelMatrix);
     glDrawElements(GL_TRIANGLES, 360, GL_UNSIGNED_INT, (void*)(330 * sizeof(GLuint)));
+  
     glBindVertexArray(0);
     glUseProgram(0);
+
+    
 
 }
 void drawTrees(mat4 worldMatrix, GLuint treeVAO,  int vertices, int shader, int bark, int leaves) {

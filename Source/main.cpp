@@ -535,6 +535,8 @@ int main(int argc, char* argv[])
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
+            glUseProgram(objShaderProgram);
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
             glUseProgram(0);
             glUseProgram(objShaderProgram);
             glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
@@ -587,8 +589,6 @@ int main(int argc, char* argv[])
 
 
         // Rotating the light
-        glUseProgram(objShaderProgram);
-        GLuint lightObjIntensityLocation = glGetUniformLocation(objShaderProgram, "light_color");
         glUseProgram(sceneShaderProgram);
         GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
         if (rotationAngle > 2 * (float)(M_PI))
@@ -618,10 +618,11 @@ int main(int argc, char* argv[])
             glUseProgram(sceneShaderProgram);
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
-            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);
 
+            glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);  
             glUseProgram(objShaderProgram);
-            glUniform3fv(lightObjIntensityLocation, 1, value_ptr(light_intensity));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.2f, 1.0f)));
+            glUseProgram(sceneShaderProgram);
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
@@ -634,7 +635,8 @@ int main(int argc, char* argv[])
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), true);
 
             glUseProgram(objShaderProgram);
-            glUniform3fv(lightObjIntensityLocation, 1, value_ptr(light_intensity));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.2f, 1.0f)));
+            glUseProgram(sceneShaderProgram);
         }
 
         // Create sun matrix with translation and rotation
@@ -772,6 +774,7 @@ int main(int argc, char* argv[])
         drawNetShadow(worldMatrix, netGridVao, cubeVao, shadowShaderProgram);
         // Sphere
         drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
+        
         if (toggleObj) {
             //Crowd
             drawCrowdShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
@@ -837,7 +840,7 @@ int main(int argc, char* argv[])
         drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, 0);
         // Model 2
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, 1);
-        
+
         if (toggleObj) {
             // Crowd
             drawCrowd(worldMatrix, modelVAO, modelVertices, objShaderProgram);
@@ -850,6 +853,7 @@ int main(int argc, char* argv[])
             // Trees
             drawTreesCubic(worldMatrix, cubeVao, sceneShaderProgram, trunkCubicTextureID, leavesCubicTextureID);
         }
+
         // Unbind geometry
         glBindVertexArray(0);
 

@@ -284,4 +284,5 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
     setProjectionMatrix(sceneShaderProgram, newProjectionMatrix);
     setProjectionMatrix(objShaderProgram, newProjectionMatrix);
     setProjectionMatrix(shadowShaderProgram, newProjectionMatrix);
+    setProjectionMatrix(objShaderProgram, newProjectionMatrix);
 }

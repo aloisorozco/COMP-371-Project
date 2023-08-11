@@ -67,6 +67,7 @@ extern bool toggleObj;
 extern int sceneShaderProgram;
 extern int objShaderProgram;
 extern int shadowShaderProgram;
+extern int objShaderProgram;
 
 // Camera info
 extern int m;
