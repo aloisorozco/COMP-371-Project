@@ -1038,58 +1038,180 @@ void drawLights(mat4 worldMatrix, int cubeVao, int shader, int metalTextureID) {
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void drawTree(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor, int trunkTextureID, int leavesTextureID) 
-{
-    glBindVertexArray(cubeVao);
-    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+void drawPerson(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, float scaleVal, float rotationAngle, vec3 translateVector, vec3 skinColor, vec3 shirtColor) {
+    noTexture(shader);
+    glUseProgram(shader);
+    glBindVertexArray(personVAO);
+    mat4 modelScalingMatrix = scale(iMat, vec3(scaleVal, scaleVal, scaleVal));
+    mat4 modelTranslationMatrix = translate(iMat, translateVector);
+    mat4 modelRotationMatrix = rotate(iMat, radians(rotationAngle), vec3(0.0f, 1.0f, 0.0f));
+    mat4 crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
 
-    float treeHeight = 20.0f * scaleFactor;
+    // Shirt color
+    setObjColor(shader, vec3(shirtColor.x, shirtColor.y, shirtColor.z));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, 528, GL_UNSIGNED_INT, 0);
 
-    // Trunk
-    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
-    trunkModelMatrix = worldMatrix * trunkModelMatrix;
-    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
-    setWorldMatrix(shader, trunkModelMatrix);
-    setTexture(shader, trunkTextureID, 0, toggleTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    // Skin color
+    setObjColor(shader, vec3(skinColor.x, skinColor.y, skinColor.z));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
 
-    setTexture(shader, leavesTextureID, 0, toggleTexture);
-
-    // Leaf top
-    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
-    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
-    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
-    setWorldMatrix(shader, leafTopModelMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Leaf middle
-    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
-    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
-    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
-    setWorldMatrix(shader, leafMiddleModelMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    // Leaf bottom
-    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
-    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
-    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
-    setWorldMatrix(shader, leafBottomModelMatrix);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void drawTrees(mat4 worldMatrix, int cubeVao, int shader, int trunkTextureID, int leavesTextureID) 
-{
-    drawTree(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f, trunkTextureID, leavesTextureID);
+void drawCrowdRow(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, float rotationAngle, float sideVal) {
+    noTexture(shader);
+    glUseProgram(shader);
 
-    drawTree(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f, trunkTextureID, leavesTextureID);
-    drawTree(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f, trunkTextureID, leavesTextureID);
+    // Bottom row
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.0f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -7.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.5f, 0.5f, 0.5f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -14.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.12f, 0.79f, 0.64f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.4f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -21.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.92f, 0.5f, 0.11f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.8f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -28.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.79f, 0.54f, 0.12f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.1f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -35.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.13f, 0.46f, 0.10f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -42.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.46f, 0.23f, 0.98f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.6f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -49.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.72f, 0.86f, 0.2f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.3f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, -56.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.73f, 0.2f, 0.8f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.1f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 0.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.85f, 0.9f, 0.2f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.2f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 7.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.16f, 0.26f, 0.83f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.923f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 14.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.72f, 0.84f, 0.25f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.9876f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 21.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.94f, 0.94f, 0.1f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.1346f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 28.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.1f, 0.83f, 0.61f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.78f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 35.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.12f, 0.32f, 0.15f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.3f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 42.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.72f, 0.14f, 0.14f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 49.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.14f, 0.71f, 0.51));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.21f, rotationAngle, vec3(sideVal * 55.0f, 7.0f, 56.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.13f, 0.13f, 0.75f));
+
+    // Middle row 
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.1346f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -7.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.13f, 0.48f, 0.1f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.4f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -14.0), vec3(0.737f, 0.643f, 0.3372f), vec3(0.92f, 0.5f, 0.11f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.8f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -21.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.73f, 0.76f, 0.16f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.2f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -28.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.1f, 0.23f, 0.34f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -35.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.13f, 0.75f, 0.34f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.6f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -42.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.53f, 0.15f, 0.74f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.3f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -49.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.45f, 0.22f, 0.08f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.3f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, -56.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.95f, 0.52f, 0.35f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.1f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 0.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.34f, 0.26f, 0.86f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 7.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.12f, 0.79f, 0.64f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.923f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 14.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.24f, 0.86f, 0.43f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.0f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 21.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.24f, 0.23f, 0.76f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.9876f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 28.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.52f, 0.97f, 0.35f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.21f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 35.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.43f, 0.75f, 0.32f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.78f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 42.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.43f, 0.86f, 0.64f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.1f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 49.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.53f, 0.34f, 0.87f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 62.0f, 12.0f, 56.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.42f, 0.86f, 0.54f));
+
+    // Top row
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.6f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -7.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.45f, 0.24f, 0.24f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.4f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -14.0), vec3(0.737f, 0.643f, 0.3372f), vec3(0.96f, 0.43f, 0.15f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.9876f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -21.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.13f, 0.54f, 0.64f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.2f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -28.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.45f, 0.13f, 0.53f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -35.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.53f, 0.87f, 0.55f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.0f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -42.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.57f, 0.79f, 0.24f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.1346f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -49.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.47f, 0.83f, 0.67f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.3f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, -56.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.27f, 0.93f, 0.6f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.1f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 0.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.14f, 0.64f, 0.34f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.21f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 7.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.45f, 0.365f, 0.255f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 14.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.12f, 0.79f, 0.64f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.8f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 21.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.24f, 0.254f, 0.54f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.78f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 28.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.2456f, 0.565f, 0.995f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 5.3f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 35.0f), vec3(0.2784f, 0.2196f, 0.03137f), vec3(0.865f, 0.54675f, 0.746f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.1f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 42.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.36575f, 0.3565f, 0.8675f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 7.0f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 49.0f), vec3(0.737f, 0.643f, 0.3372f), vec3(0.625f, 0.865f, 0.58653f));
+    drawPerson(worldMatrix, personVAO, vertices, shader, 6.923f, rotationAngle, vec3(sideVal * 69.0f, 17.0f, 56.0f), vec3(0.9372f, 0.8784f, 0.72549f), vec3(0.85f, 0.485f, 0.375f));
+}
+
+void drawCrowd(mat4 worldMatrix, GLuint personVAO, int vertices, int shader) {
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, 90.0f, 1.0f);
+    drawCrowdRow(worldMatrix, personVAO, vertices, shader, -90.0f, -1.0f);
+}
+
+void drawBallBoys(mat4 worldMatrix, GLuint personVAO, int vertices, int shader) {
+    noTexture(shader);
+    glUseProgram(shader);
+    glBindVertexArray(personVAO);
+    mat4 modelScalingMatrix = scale(iMat, vec3(7.0f, 7.0f, 7.0f));
+    mat4 modelTranslationMatrix = translate(iMat, vec3(35.0f, 0.0f, 55.0f));
+    mat4 modelRotationMatrix = rotate(iMat, radians(0.0f), vec3(1.0f, 1.0f, 1.0f));
+    mat4 crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+   
+    // Shirt colours
+    setObjColor(shader, vec3(1.0f, 1.0f, 1.0f));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, 147, GL_UNSIGNED_INT, 0);
+
+    setObjColor(shader, vec3(0.0f, 0.0f, 0.0f));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, 381, GL_UNSIGNED_INT, (void*)(147 * sizeof(GLuint)));
+
+    //// Skin colour
+    setObjColor(shader, vec3(0.737f, 0.643f, 0.3372f));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
+   
+    modelTranslationMatrix = translate(iMat, vec3(-35.0f, 0.0f, -55.0f));
+    modelRotationMatrix = rotate(iMat, radians(180.0f), vec3(0.0f, 1.0f, 0.0f));
+    crowdModelMatrix = worldMatrix * modelTranslationMatrix * modelRotationMatrix * modelScalingMatrix;
+    setWorldMatrix(shader, crowdModelMatrix);
+
+    // Shirt colours
+    setObjColor(shader, vec3(1.0f, 1.0f, 1.0f));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, 147, GL_UNSIGNED_INT, 0);
+
+    setObjColor(shader, vec3(0.0f, 0.0f, 0.0f));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, 381, GL_UNSIGNED_INT, (void*)(147 * sizeof(GLuint)));
+
+    //// Skin color
+    setObjColor(shader, vec3(0.737f, 0.643f, 0.3372f));
+    setWorldMatrix(shader, crowdModelMatrix);
+    glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
+
+}
+void drawIndividualTree(mat4 worldMatrix, GLuint treeVAO, int vertices, int shader, float scaleVal, float xVal, float zVal, int bark, int leaves) {
+    //noTexture(shader);
+    
+    glUseProgram(shader);
+    glBindVertexArray(treeVAO);
+    mat4 treeScalingMatrix = scale(iMat, vec3(scaleVal, scaleVal, scaleVal));
+    mat4 treeTranslationMatrix = translate(iMat, vec3(xVal, 0.0f, zVal));
+    mat4 treeRotationMatrix = rotate(iMat, radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+    mat4 treeModelMatrix = worldMatrix * treeTranslationMatrix * treeRotationMatrix * treeScalingMatrix;
+    // Bark
+    setObjTexture(shader, bark, 1);
+    setObjColor(shader, vec3(0.5451f, 0.27f, 0.0745f));
+    setWorldMatrix(shader, treeModelMatrix);
+    glDrawElements(GL_TRIANGLES, 330, GL_UNSIGNED_INT, 0);
+    // Leaves
+    setObjTexture(shader, leaves, 1);
+    setObjColor(shader, vec3(0.1882f, 0.27, 0.1607f));
+    glDrawElements(GL_TRIANGLES, 360, GL_UNSIGNED_INT, (void*)(330 * sizeof(GLuint)));
+
+}
+void drawTrees(mat4 worldMatrix, GLuint treeVAO,  int vertices, int shader, int bark, int leaves) {
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.15f, 50.0f, 130.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.2f, 130.0f, 30.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, 130.0f, 100.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.2f, 115.0f, 110.0f, bark, leaves);
+    
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, -140.0f, 30.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.25f, -150.0f, 80.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, -100.0f, 120.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.15f, -70.0f, 110.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.15f, 0.0f, 110.0f, bark, leaves);
+
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, 0.0f, -110.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.37f, 140.0f, -10.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.35f, 130.0f, -100.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.31f, 90.0f, -100.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.32f, 50.0f, -120.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.25f, 100.0f, -120.0f, bark, leaves);
+
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.25f, -30.0f, -115.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.25f, -70.0f, -110.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.2f, -130.0f, -70.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.35f, -130.0f, -10.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, -110.0f, -140.0f, bark, leaves);
+    drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, -140.0f, -120.0f, bark, leaves);
 }
