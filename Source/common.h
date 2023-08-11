@@ -65,6 +65,7 @@ extern bool useCamera1;
 
 extern int sceneShaderProgram;
 extern int shadowShaderProgram;
+extern int objShaderProgram;
 
 // Camera info
 extern int m;

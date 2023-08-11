@@ -299,4 +299,5 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
     glm::mat4 newProjectionMatrix = glm::perspective(70.0f, aspectRatio, 0.01f, 400.0f);
     setProjectionMatrix(sceneShaderProgram, newProjectionMatrix);
     setProjectionMatrix(shadowShaderProgram, newProjectionMatrix);
+    setProjectionMatrix(objShaderProgram, newProjectionMatrix);
 }
