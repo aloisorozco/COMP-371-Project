@@ -185,7 +185,7 @@ void resetTennisBallPosition() {
     canStartPoint = true;
     racketHitCount = 0;
 
-    if (isSimulation) {
+    if (isSimulation || !isP1sTurnToServe) {
         startPoint();
     }
 }
@@ -262,7 +262,7 @@ void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     float randNum = 0.0f;
 
     if (isServe) {
-        if (rand() % 5 < 4) {
+        if (rand() % 7 < 6) {
             sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
         }
         else {

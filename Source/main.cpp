@@ -553,6 +553,9 @@ int main(int argc, char* argv[])
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);  
+            glUseProgram(objShaderProgram);
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.2f, 1.0f)));
+            glUseProgram(sceneShaderProgram);
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
@@ -563,6 +566,10 @@ int main(int argc, char* argv[])
             
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(sin(rotationAngle))));
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), true);
+
+            glUseProgram(objShaderProgram);
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.2f, 1.0f)));
+            glUseProgram(sceneShaderProgram);
         }
 
         // Create sun matrix with translation and rotation
