@@ -9,9 +9,9 @@ uniform vec3 light_direction;
 uniform int useTexture;
 uniform vec3 object_color;
 
-const float shading_ambient_strength = 0.4;
-const float shading_diffuse_strength = 0.8;
-const float shading_specular_strength = 0.1;
+uniform float shading_ambient_strength;
+uniform float shading_diffuse_strength;
+uniform float shading_specular_strength;
 
 uniform float light_cutoff_outer;
 uniform float light_cutoff_inner;
@@ -92,7 +92,7 @@ void main()
     }
     else 
     {
-        vec3 color  = (specular + diffuse + ambient) * vertexColor;
+        vec3 color = clamp((specular + diffuse + ambient), 0.05f, 1.0f) * vertexColor;
         result = vec4(color, 1.0f);
     }
 }

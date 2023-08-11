@@ -228,26 +228,6 @@ void updateSphereVelocity() {
     sphereVelocity.y += sphereAcceleration.y;
 }
 
-//void updateSphereWhenHitByRacket() {
-//    int sphereRandomNumber = rand() % sphereRandomNumberRange;
-//    float sphereVelocityZ = -1.0f;
-//    float sphereVelocityX = -0.25f;
-//    
-//
-//    if (sphereRandomNumber < 3) {
-//        sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
-//    }
-//    else if (sphereRandomNumber  == 3) {
-//        sphereVelocity = vec3(0.01f * ((rand() % 24) - 12), sphereInitialYVelocity, sphereVelocityZ);
-//    }
-//    else if (sphereRandomNumber == 4) {
-//        sphereVelocity = vec3(0.01f * ((rand() % 50) - 25), sphereInitialYVelocity, sphereVelocityZ);
-//    }
-//
-//    sphereRotationIncrement = -sphereRotationIncrement;
-//    racketHitCount++;
-//}
-
 void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     float sphereVelocityZ = (playerRacketIndex == 0 ? 1.0f : -1.0f);
     float sphereVelocityX = (playerRacketIndex == 0 ? 0.25f : -0.25f);
@@ -309,7 +289,6 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
     if (canStartPoint == false && didHitRacketZ(racketPosition1, racketPosition2) && didHitRacketX(racketPosition1, racketPosition2)) {
         
         if (playerRacketIndex == 1) {
-            //updateSphereWhenHitByRacket();
             updateSphereWhenHitByRacketBot(racketPosition2, spherePosition.x);
             isServe = false;
         }
@@ -320,6 +299,7 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
 
         if (isSimulation) {
             ballX = finalBallPosition(sphereVelocity, spherePosition);
+            SoundEngine->play2D(hitSource, false);
             if ((spherePosition.z <= (racketPosition2.z) && spherePosition.z >= (racketPosition2.z - 1.0f) &&
                 spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth)) {
                 isBotReceive = true;
@@ -332,9 +312,11 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth) {
             isBotReceive = true;
             ballX = finalBallPosition(sphereVelocity, spherePosition);
+            SoundEngine->play2D(hitSource, false);
         }
         else {
             isBotReceive = false;  
+            SoundEngine->play2D(hitSource, false);
         }
 
         if (playerRacketIndex == 0) {

@@ -44,10 +44,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             useCamera1 = true;
 
             // Angles to look at center of racket 2
-            cameraLookAtCenter = glm::vec3(0.0f, 6.0f, 0.0f);
+            cameraLookAtCenter = glm::vec3(0.0f, 5.0f, 0.0f);
 
             // Camera position to look at racket 2
-            cameraPosition1 = (glm::vec3(0.4f, 0.4f, 0.4f) * racketPosition2) + glm::vec3(-3.0f, 18.0f, 25.0f);
+            cameraPosition1 = glm::vec3(0.0f, 15.0f, 35.0f);
 
             whichRacket = 2;
             m++;
@@ -139,6 +139,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             toggleTexture = 1;
         }
     }
+    // Toggle object files
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+    {
+        toggleObj = !toggleObj;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
     {
         GLuint useDefaultLightLocation = glGetUniformLocation(sceneShaderProgram, "useDefaultLight");
@@ -239,48 +245,26 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
 
         
+        // Reset the score
+        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+        {
+            resetScore();
+        }
 
-        //if (whichRacket == 1) 
-        //{
-        //    // Rotate model to the left
-        //    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        //    {
-        //        upArmYAngle[whichRacket] += 5.0f;
-        //    }
 
-        //    // Rotate model to the right
-        //    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        //    {
-        //        upArmYAngle[whichRacket] -= 5.0f;
-        //    }
-        //} 
-        //if (whichRacket == 2)
-        //{
-        //    // Rotate model to the left
-        //    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        //    {
-        //        upArmYAngle[whichRacket] += 5.0f;
-        //    }
-
-        //    // Rotate model to the right
-        //    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        //    {
-        //        upArmYAngle[whichRacket] -= 5.0f;
-        //    }
-        //}
-
-        //set Simulation
+        //Set simulation
         if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
         {
-            cout << "Set simulation";
             if(isSimulation){
                 botSpeed = 0.3f;
                 isSimulation = false;
+                resetScore();
             }
             else{
-                startPoint();
                 botSpeed = 0.4f;
                 isSimulation = true;
+                resetScore();
+                startPoint();
             }
         }
      }
@@ -298,6 +282,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
     // Update the projection matrix with the new aspect ratio
     glm::mat4 newProjectionMatrix = glm::perspective(70.0f, aspectRatio, 0.01f, 400.0f);
     setProjectionMatrix(sceneShaderProgram, newProjectionMatrix);
+    setProjectionMatrix(objShaderProgram, newProjectionMatrix);
     setProjectionMatrix(shadowShaderProgram, newProjectionMatrix);
     setProjectionMatrix(objShaderProgram, newProjectionMatrix);
 }
