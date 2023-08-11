@@ -114,10 +114,11 @@ void drawModel(glm::mat4 worldMatrix, glm::vec3 racketColor, int racketTextureID
     glm::mat4 upperArmTranslate = glm::translate(iMat, upArmInitialPosition + upArmPosition);
     glm::mat4 upperArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
     glm::mat4 upperArmInitialRotation = glm::rotate(iMat, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 upperArmRotation;// = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 upperArmRotation;
     if (modelIndex) {
         upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(iMat, glm::radians(racketDirectionAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-    } 
+    }
     else {
         upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(iMat, glm::radians(botRacketDirectionAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 

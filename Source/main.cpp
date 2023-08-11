@@ -853,6 +853,7 @@ int main(int argc, char* argv[])
             }
         }
 
+        // Rotate model to the right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
             if (!isSimulation) {
