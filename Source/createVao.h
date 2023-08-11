@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/common.hpp>
+#include "OBJloaderV2.h"
 
 
 // Creating a VAO definition, as all objects use the same (position, color) structure

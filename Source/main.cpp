@@ -80,6 +80,7 @@ bool p2Scored;
 // Shader program
 int sceneShaderProgram;
 int shadowShaderProgram;
+int objShaderProgram;
 
 // Toggles
 int toggleTexture = 1;
@@ -464,9 +465,12 @@ int main(int argc, char* argv[])
                 cameraUp);                              // up
 
             setViewMatrix(sceneShaderProgram, viewMatrix);
+            setViewMatrix(objShaderProgram, viewMatrix);
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
+            glUseProgram(objShaderProgram);
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
             glUseProgram(0);
 
             glm::mat4 cameraRotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(dt * 1.8f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -479,11 +483,12 @@ int main(int argc, char* argv[])
                 cameraUp);                              // up
 
             setViewMatrix(sceneShaderProgram, viewMatrix);
+            setViewMatrix(objShaderProgram, viewMatrix);
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(cameraPosition1));
             glUseProgram(objShaderProgram);
-            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(cameraPosition1));
             glUseProgram(0);
         }
         else {
@@ -493,6 +498,7 @@ int main(int argc, char* argv[])
                 cameraUp);                                        // up
 
             setViewMatrix(sceneShaderProgram, viewMatrix);
+            setViewMatrix(objShaderProgram, viewMatrix);
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(cameraPosition));
@@ -518,6 +524,7 @@ int main(int argc, char* argv[])
         glUseProgram(objShaderProgram);
         glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(vec3(1.0f, 1.0f, 1.0f)));
         // Rotating the light
+        glUseProgram(sceneShaderProgram);
         GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
         if (rotationAngle > 2 * (float)(M_PI))
         {
@@ -586,6 +593,7 @@ int main(int argc, char* argv[])
             lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_position"), 1, value_ptr(lightPositionSun));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_direction"), 1, value_ptr(lightDirection));
+
             glUseProgram(objShaderProgram);
             glUniform3fv(glGetUniformLocation(objShaderProgram, "light_position"), 1, value_ptr(lightPositionSun));
             glUniform3fv(glGetUniformLocation(objShaderProgram, "light_direction"), 1, value_ptr(lightDirection));
@@ -685,7 +693,7 @@ int main(int argc, char* argv[])
         // Stadium
         drawStadiumShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Trees
-        drawTreesShadow(worldMatrix, cubeVao, shadowShaderProgram);
+        //drawTreesShadow(worldMatrix, cubeVao, treeVertices, shadowShaderProgram);
         // Scoreboard
         drawScoreboardShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Net
@@ -693,7 +701,7 @@ int main(int argc, char* argv[])
         // Sphere
         drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
         //Crowd
-         drawCrowdShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
+        drawCrowdShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
         // Ball boys
         drawBallBoyShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
         // Trees
@@ -738,7 +746,7 @@ int main(int argc, char* argv[])
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
         // Trees
-        drawTrees(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
+        //drawTrees(worldMatrix, cubeVao, treeVertices, sceneShaderProgram, barkTextureID, leafTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights
@@ -755,7 +763,7 @@ int main(int argc, char* argv[])
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, 1);
         // Temperatures
 
-        glUseProgram(objShaderProgram);
+        
         // Crowd
         drawCrowd(worldMatrix, modelVAO, modelVertices, objShaderProgram);
         //// Ball Boys
@@ -920,6 +928,7 @@ int main(int argc, char* argv[])
         glm::mat4 viewMatrix = lookAt(cameraPosition, cameraPosition + cameraLookAt, cameraUp);
 
         setViewMatrix(sceneShaderProgram, viewMatrix);
+        setViewMatrix(objShaderProgram, viewMatrix);
     }
 
     // Shutdown GLFW
