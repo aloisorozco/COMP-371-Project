@@ -528,7 +528,7 @@ int main(int argc, char* argv[])
         }
 
         // Toggle spotlights at night
-        if (rotationAngle > (9 *(float)(M_PI))/ 10 || rotationAngle < (float)(M_PI) / 10) {
+        if (rotationAngle > (15 *(float)(M_PI))/ 18 || rotationAngle < (3 * (float)(M_PI)) / 18) {
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), true);
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useRadialLight"), true);
         }
@@ -672,7 +672,7 @@ int main(int argc, char* argv[])
         // Stadium
         drawStadiumShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Trees
-        drawTreesShadow(worldMatrix, cubeVao, shadowShaderProgram);
+        drawTreesCubicShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Scoreboard
         drawScoreboardShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Net
@@ -720,7 +720,7 @@ int main(int argc, char* argv[])
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
         // Trees
-        drawTrees(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
+        drawTreesCubic(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights

@@ -553,7 +553,7 @@ void drawScoreboardShadow(glm::mat4 worldMatrix, int cubeVao, int shadowShaderPr
     drawNumber(worldMatrix, cubeVao, shadowShaderProgram, glm::vec3(25.0f, 86.0f, 0.0f), glm::vec3(0.6f, 0.6f, 1.0f), setScore2);
 }
 
-void drawTreeShadow(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
+void drawTreeCubicShadow(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
     glBindVertexArray(cubeVao);
 
     float treeHeight = 20.0f * scaleFactor;
@@ -587,18 +587,18 @@ void drawTreeShadow(mat4 worldMatrix, int cubeVao, int shader, float xPosition, 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void drawTreesShadow(mat4 worldMatrix, int cubeVao, int shader) {
-    drawTreeShadow(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f);
+void drawTreesCubicShadow(mat4 worldMatrix, int cubeVao, int shader) {
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, 130.0f, -85.0f, 1.2f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, -130.0f, -85.0f, 1.9f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, 160.0f, -35.0f, 1.3f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, -160.0f, -35.0f, 2.1f);
 
-    drawTreeShadow(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
-    drawTreeShadow(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, 70.0f, -115.0f, 1.0f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, -30.0f, -140.0f, 1.4f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, 0.0f, -120.0f, 1.9f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, -40.0f, -130.0f, 1.2f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, 60.0f, 135.0f, 1.3f);
+    drawTreeCubicShadow(worldMatrix, cubeVao, shader, -50.0f, 115.0f, 2.1f);
 }
