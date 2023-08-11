@@ -16,7 +16,6 @@ int setScore2 = 0;
 
 
 
-
 // IMPORTANT: numbers 11 and 12 represents A and d respectively***
 void score(bool p1Scored, bool p2Scored) 
 {
@@ -54,6 +53,7 @@ void score(bool p1Scored, bool p2Scored)
 				score2[0] = 0;
 				score2[1] = 0;
 				setScore1++;
+				SoundEngine->play2D(cheerSource, false);
 				isP1sTurnToServe = !isP1sTurnToServe;
 			}
 			break;
@@ -63,6 +63,7 @@ void score(bool p1Scored, bool p2Scored)
 			score2[0] = 0;
 			score2[1] = 0;
 			setScore1++;
+			SoundEngine->play2D(cheerSource, false);
 			isP1sTurnToServe = !isP1sTurnToServe;
 			break;
 		}
@@ -102,6 +103,7 @@ void score(bool p1Scored, bool p2Scored)
 				score2[0] = 0;
 				score2[1] = 0;
 				setScore2++;
+				SoundEngine->play2D(cheerSource, false);
 				isP1sTurnToServe = !isP1sTurnToServe;
 			}
 			break;
@@ -111,8 +113,35 @@ void score(bool p1Scored, bool p2Scored)
 			score2[0] = 0;
 			score2[1] = 0;
 			setScore2++;
+			SoundEngine->play2D(cheerSource, false);
 			isP1sTurnToServe = !isP1sTurnToServe;
 			break;
 		}
 	}
+
+	if (!isSimulation) {
+		if (setScore2 == 7) {
+			resetScore();
+			SoundEngine->play2D(gameOverSource, false);
+		}
+		else if (setScore1 == 7) {
+			resetScore();
+			SoundEngine->play2D(winSource, false);
+		}
+	}
+	else {
+		if (setScore1 == 7 || setScore2 == 7) {
+			resetScore();
+			SoundEngine->play2D(gameOverSimSource, false);
+		}
+	}
+}
+
+void resetScore() {
+	score1[0] = 0;
+	score1[1] = 0;
+	score2[0] = 0;
+	score2[1] = 0;
+	setScore1 = 0;
+	setScore2 = 0;
 }

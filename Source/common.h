@@ -82,6 +82,17 @@ extern float botSpeed;
 
 extern int fall;
 
+// Sound
+extern ISoundEngine* SoundEngine;
+extern ISoundSource* musicSource;
+extern ISoundSource* hitSource;
+extern ISoundSource* shoeSource;
+extern ISoundSource* shoe2Source;
+extern ISoundSource* cheerSource;
+extern ISoundSource* gameOverSimSource;
+extern ISoundSource* gameOverSource;
+extern ISoundSource* winSource;
+
 // --- Global functions --- 
 extern void setWorldMatrix(int shaderProgram, glm::mat4 worldMatrix);
 extern void setProjectionMatrix(int shaderProgram, glm::mat4 worldMatrix);
@@ -91,4 +102,5 @@ extern void noTexture(int sceneShaderProgram);
 extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight, float specularLight, float alpha, int useShadows);
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
 extern void score(bool p1Scored, bool p2Scored);
+extern void resetScore();
 extern void startPoint();

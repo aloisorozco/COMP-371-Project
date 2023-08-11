@@ -320,6 +320,7 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
 
         if (isSimulation) {
             ballX = finalBallPosition(sphereVelocity, spherePosition);
+            SoundEngine->play2D(hitSource, false);
             if ((spherePosition.z <= (racketPosition2.z) && spherePosition.z >= (racketPosition2.z - 1.0f) &&
                 spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth)) {
                 isBotReceive = true;
@@ -332,9 +333,11 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             spherePosition.x >= racketPosition2.x - racketWidth && spherePosition.x <= racketPosition2.x + racketWidth) {
             isBotReceive = true;
             ballX = finalBallPosition(sphereVelocity, spherePosition);
+            SoundEngine->play2D(hitSource, false);
         }
         else {
             isBotReceive = false;  
+            SoundEngine->play2D(hitSource, false);
         }
 
         if (playerRacketIndex == 0) {

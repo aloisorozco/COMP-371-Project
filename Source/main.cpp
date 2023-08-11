@@ -19,8 +19,8 @@
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
 
-//#include <irrKlang/include/irrKlang.h>
-//using namespace irrklang;
+#include <irrKlang/include/irrKlang.h>
+using namespace irrklang;
 
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
                         // initializing OpenGL and binding inputs
@@ -124,7 +124,18 @@ GLenum renderModeModel = GL_TRIANGLES;
 GLenum renderModeRacketGrid = GL_LINES;
 
 // Sound engine
-//ISoundEngine* SoundEngine = createIrrKlangDevice();
+ISoundEngine* SoundEngine;
+
+// Sounds
+ISoundSource* musicSource;
+ISoundSource* hitSource;
+ISoundSource* shoeSource;
+ISoundSource* shoe2Source;
+ISoundSource* cheerSource;
+ISoundSource* gameOverSimSource;
+ISoundSource* gameOverSource;
+ISoundSource* winSource;
+
 
 // Setting projection matrix depending on shader program
 void setProjectionMatrix(int shaderProgram, glm::mat4 projectionMatrix)
@@ -249,9 +260,35 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-    // Start background music
-    //SoundEngine->play2D("../Assets/Audio/good-night.mp3", true);
+    // Sound engine
+    SoundEngine = createIrrKlangDevice();
 
+
+    // Start background music
+    
+    // Sound sources
+    musicSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/homemadeSong.mp3");
+    hitSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/hit.mp3");
+    shoeSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/shoe.mp3");
+    shoe2Source = SoundEngine->addSoundSourceFromFile("../Assets/Audio/shoe2.mp3");
+    cheerSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/cheer.mp3");
+    gameOverSimSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/gameoverSim.mp3");
+    gameOverSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/gameover.mp3");
+    winSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/win.mp3");
+
+    // Setting volumes
+    musicSource->setDefaultVolume(0.2f);
+    hitSource->setDefaultVolume(0.2f);
+    shoeSource->setDefaultVolume(0.1f);
+    shoe2Source->setDefaultVolume(0.1f);
+    cheerSource->setDefaultVolume(0.5f);
+    gameOverSource->setDefaultVolume(0.5f);
+    gameOverSimSource->setDefaultVolume(0.5f);
+    winSource->setDefaultVolume(0.5f);
+
+
+    // Start background music
+    SoundEngine->play2D("../Assets/Audio/homemadeSong.mp3", true);
 
     // Load Textures
 #if defined(PLATFORM_OSX)
@@ -595,11 +632,11 @@ int main(int argc, char* argv[])
         glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_dir_4"), 1, value_ptr(spotlightDirection));
 
         // Light parameters for radial light
-        glm::vec3 radialLightPosition = radialCameraPosition;
-        glm::vec3 radialLightDirection = normalize(glm::vec3(0.0f, 25.0f, -100.0f) - radialCameraPosition);
+        glm::vec3 radialLightPosition = glm::vec3(0.0f, 10.0f, 50.0f);
+        glm::vec3 radialLightDirection = normalize(glm::vec3(0.0f, 20.0f, -100.0f) - radialLightPosition);
 
         glUniform3fv(glGetUniformLocation(sceneShaderProgram, "radial_light_color"), 1, value_ptr(glm::vec3(1.0f)));
-        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "radial_light_position"), 1, value_ptr(radialCameraPosition));
+        glUniform3fv(glGetUniformLocation(sceneShaderProgram, "radial_light_position"), 1, value_ptr(radialLightPosition));
         glUniform3fv(glGetUniformLocation(sceneShaderProgram, "radial_light_direction"), 1, value_ptr(radialLightDirection));
         glUseProgram(0);
 
@@ -754,30 +791,6 @@ int main(int argc, char* argv[])
             upArmScale = glm::vec3(1.0f);
         }
 
-        // Rotate world up
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) // move up
-        {
-            worldXAngle -= 0.3f;
-        }
-
-        // Rotate world down
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) // move up
-        {
-            worldXAngle += 0.3f;
-        }
-
-        // Rotate world left
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) // move up
-        {
-            worldYAngle += 0.3f;
-        }
-
-        // Rotate world right
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) // move up
-        {
-            worldYAngle -= 0.3f;
-        }
-
         // Pan the camera on the X axis
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
         {
@@ -847,6 +860,7 @@ int main(int argc, char* argv[])
         setViewMatrix(sceneShaderProgram, viewMatrix);
     }
 
+    SoundEngine->drop();
     // Shutdown GLFW
     glfwTerminate();
 

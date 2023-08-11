@@ -15,15 +15,24 @@
 
 float ballXPosition = 0.0f;
 float botSpeed = 0.3f;
+int posCounter = 0;
 
 void updateBotPosition(float BallX, vec3 position) {
-
+	
 	if (BallX <= position.x - 1.0f) {
 		setPositionX1(position.x - botSpeed);
 	}
 	else if (BallX >= position.x + 1.0f) {
 		setPositionX1(position.x + botSpeed);
 	}
+
+	if (posCounter == 200) {
+		SoundEngine->play2D(shoeSource, false);
+	}
+	else if (posCounter == 400) {
+		SoundEngine->play2D(shoe2Source, false);
+	}
+	posCounter = (posCounter + 1) % 500;
 }
 
 void updatePlayerPosition(float BallX, vec3 position) {
@@ -34,6 +43,14 @@ void updatePlayerPosition(float BallX, vec3 position) {
 	else if (BallX >= position.x + 1.0f) {
 		setPositionX2(position.x + botSpeed);
 	}
+
+	if (posCounter == 200) {
+		SoundEngine->play2D(shoeSource, false);
+	}
+	else if (posCounter == 400) {
+		SoundEngine->play2D(shoe2Source, false);
+	}
+	posCounter = (posCounter + 1) % 500;
 }
 
 
