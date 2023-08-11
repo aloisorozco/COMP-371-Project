@@ -102,6 +102,8 @@ extern void setWorldMatrix(int shaderProgram, glm::mat4 worldMatrix);
 extern void setProjectionMatrix(int shaderProgram, glm::mat4 worldMatrix);
 extern void setUniqueColor(int shaderProgram, float colorX, float colorY, float colorZ);
 extern void setTexture(int sceneShaderProgram, GLuint textureID, int textureUnit, int useTexture);
+extern void setObjTexture(int sceneShaderProgram, GLuint textureID, int useTexture);
+extern void setObjColor(int shaderProgram, glm::vec3 color);
 extern void noTexture(int sceneShaderProgram);
 extern void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight, float specularLight, float alpha, int useShadows);
 extern void setBlend(int sceneShaderProgram, float alphaBlending);
