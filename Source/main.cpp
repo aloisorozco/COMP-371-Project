@@ -472,7 +472,7 @@ int main(int argc, char* argv[])
 
         // Light rotation calculations
         glUseProgram(sceneShaderProgram);
-        rotationAngle += dt * 0.1f;
+        rotationAngle += dt * 0.2f;
         float sunDistance = 160.0f;  // Adjust this value to set the desired distance
         float sunX = sunDistance * cos(rotationAngle);
         float sunY = sunDistance * sin(rotationAngle);
@@ -491,7 +491,7 @@ int main(int argc, char* argv[])
         }
 
         // Toggle spotlights at night
-        if (rotationAngle > (9 *(float)(M_PI))/ 10 || rotationAngle < (float)(M_PI) / 10) {
+        if (rotationAngle > (15 *(float)(M_PI))/ 18 || rotationAngle < (3 *(float)(M_PI)) / 18) {
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useSpotlight"), true);
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useRadialLight"), true);
         }

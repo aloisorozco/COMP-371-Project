@@ -18,7 +18,7 @@ using namespace glm;
 // ** The code here is inspired by http://www.songho.ca/opengl/gl_sphere.html, shown to us by the TA. **
 
 float sphereRadius;
-float racketWidth = 2.25f;
+float racketWidth = 3.0f;
 
 float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition);
 void setPositionX1(float xValue);
