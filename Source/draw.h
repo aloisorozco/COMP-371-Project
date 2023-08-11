@@ -77,21 +77,21 @@ float increaseIncrement = 1.5f;
 
 void updateModel() {
     
-    //works for P1 need to change for P2 (opposite +/-)
     if (playerRacketIndex) {
-        upArmYAngle[playerRacketIndex] = upArmYAngle[playerRacketIndex] - increaseIncrement;
-        lowArmXAngle[playerRacketIndex] = lowArmXAngle[playerRacketIndex] + increaseIncrement;
+        //p1
+        upArmYAngle[playerRacketIndex] = upArmYAngle[playerRacketIndex] - (racketDirectionMultiplier * increaseIncrement);
+        lowArmXAngle[playerRacketIndex] = lowArmXAngle[playerRacketIndex] + (racketDirectionMultiplier * increaseIncrement);
     }
     else {
-        upArmYAngle[playerRacketIndex] = upArmYAngle[playerRacketIndex] + increaseIncrement;
-        lowArmXAngle[playerRacketIndex] = lowArmXAngle[playerRacketIndex] - increaseIncrement;
+        upArmYAngle[playerRacketIndex] = upArmYAngle[playerRacketIndex] + (botRacketDirectionMultiplier * increaseIncrement);
+        lowArmXAngle[playerRacketIndex] = lowArmXAngle[playerRacketIndex] - (botRacketDirectionMultiplier * increaseIncrement);
     }
     
     if (abs(upArmYAngle[playerRacketIndex]) == 45.0f) {
         increaseIncrement = -1.5f;
     }
-    else if ((upArmYAngle[playerRacketIndex] == 1.5f && playerRacketIndex == 1)
-        || (upArmYAngle[playerRacketIndex] == -1.5f && playerRacketIndex == 0)) {
+    else if ((upArmYAngle[playerRacketIndex] == (racketDirectionMultiplier * 1.5f) && playerRacketIndex == 1)
+        || (upArmYAngle[playerRacketIndex] == (botRacketDirectionMultiplier * -1.5f) && playerRacketIndex == 0)) {
         increaseIncrement = 1.5f;
         upArmYAngle[playerRacketIndex] = 0.0f;
         lowArmXAngle[playerRacketIndex] = 0.0f;
@@ -114,7 +114,14 @@ void drawModel(glm::mat4 worldMatrix, glm::vec3 racketColor, int racketTextureID
     glm::mat4 upperArmTranslate = glm::translate(iMat, upArmInitialPosition + upArmPosition);
     glm::mat4 upperArmScale = glm::scale(iMat, glm::vec3(1.536f, 6.144f, 1.536f) * upArmScale);
     glm::mat4 upperArmInitialRotation = glm::rotate(iMat, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 upperArmRotation;// = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f));
+    if (modelIndex) {
+        upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(iMat, glm::radians(racketDirectionAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+    } 
+    else {
+        upperArmRotation = glm::rotate(iMat, glm::radians(upArmXAngle), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(iMat, glm::radians(upArmYAngle[modelIndex]), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(iMat, glm::radians(botRacketDirectionAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    }
     glm::mat4 upperArmModelMatrix = worldMatrix * upperArmTranslate * upperArmRotation * upperArmInitialRotation * upperArmScale;
     glm::mat4 upperArmHierarchy = upperArmTranslate * upperArmRotation;
     setWorldMatrix(sceneShaderProgram, upperArmModelMatrix);

@@ -21,9 +21,19 @@ void updateBotPosition(float BallX, vec3 position) {
 	
 	if (BallX <= position.x - 1.0f) {
 		setPositionX1(position.x - botSpeed);
+
+		if (spherePosition.z > 0.1f || sphereVelocity.z > 0.0f) {
+			botRacketDirectionMultiplier = -1;
+			botRacketDirectionAngle = 180.0f;
+		}
 	}
 	else if (BallX >= position.x + 1.0f) {
 		setPositionX1(position.x + botSpeed);
+
+		if (spherePosition.z > 0.1f || sphereVelocity.z > 0.0f) {
+			botRacketDirectionMultiplier = 1;
+			botRacketDirectionAngle = 0.0f;
+		}
 	}
 
 	if (posCounter == 200) {
