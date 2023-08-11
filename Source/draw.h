@@ -1050,11 +1050,13 @@ void drawPerson(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, fl
 
     // Shirt color
     setObjColor(shader, vec3(shirtColor.x, shirtColor.y, shirtColor.z));
+    setObjMaterial(shader, 0.4f, 0.8f, 0.2f, toggleShadows);
     setWorldMatrix(shader, crowdModelMatrix);
     glDrawElements(GL_TRIANGLES, 528, GL_UNSIGNED_INT, 0);
 
     // Skin color
     setObjColor(shader, vec3(skinColor.x, skinColor.y, skinColor.z));
+    setObjMaterial(shader, 0.4f, 0.8f, 0.2f, toggleShadows);
     setWorldMatrix(shader, crowdModelMatrix);
     glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
 
@@ -1122,11 +1124,14 @@ void drawCrowdRow(mat4 worldMatrix, GLuint personVAO, int vertices, int shader, 
 }
 
 void drawCrowd(mat4 worldMatrix, GLuint personVAO, int vertices, int shader) {
+    glUseProgram(shader);
     drawCrowdRow(worldMatrix, personVAO, vertices, shader, 90.0f, 1.0f);
     drawCrowdRow(worldMatrix, personVAO, vertices, shader, -90.0f, -1.0f);
+    glUseProgram(0);
 }
 
 void drawBallBoys(mat4 worldMatrix, GLuint personVAO, int vertices, int shader) {
+    glUseProgram(shader);
     noTexture(shader);
     glUseProgram(shader);
     glBindVertexArray(personVAO);
@@ -1144,7 +1149,7 @@ void drawBallBoys(mat4 worldMatrix, GLuint personVAO, int vertices, int shader) 
     setWorldMatrix(shader, crowdModelMatrix);
     glDrawElements(GL_TRIANGLES, 381, GL_UNSIGNED_INT, (void*)(147 * sizeof(GLuint)));
 
-    //// Skin colour
+    // Skin colour
     setObjColor(shader, vec3(0.737f, 0.643f, 0.3372f));
     setWorldMatrix(shader, crowdModelMatrix);
     glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
@@ -1168,6 +1173,8 @@ void drawBallBoys(mat4 worldMatrix, GLuint personVAO, int vertices, int shader) 
     setWorldMatrix(shader, crowdModelMatrix);
     glDrawElements(GL_TRIANGLES, vertices, GL_UNSIGNED_INT, (void*)(528 * sizeof(GLuint)));
 
+    glUseProgram(0);
+
 }
 void drawIndividualTree(mat4 worldMatrix, GLuint treeVAO, int vertices, int shader, float scaleVal, float xVal, float zVal, int bark, int leaves) {
     //noTexture(shader);
@@ -1178,15 +1185,21 @@ void drawIndividualTree(mat4 worldMatrix, GLuint treeVAO, int vertices, int shad
     mat4 treeTranslationMatrix = translate(iMat, vec3(xVal, 0.0f, zVal));
     mat4 treeRotationMatrix = rotate(iMat, radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
     mat4 treeModelMatrix = worldMatrix * treeTranslationMatrix * treeRotationMatrix * treeScalingMatrix;
+    
     // Bark
-    setObjTexture(shader, bark, 1);
+    setObjTexture(shader, bark, toggleTexture);
+    setObjMaterial(shader, 0.2f, 0.8f, 0.2f, toggleShadows);
     setObjColor(shader, vec3(0.5451f, 0.27f, 0.0745f));
     setWorldMatrix(shader, treeModelMatrix);
     glDrawElements(GL_TRIANGLES, 330, GL_UNSIGNED_INT, 0);
     // Leaves
-    setObjTexture(shader, leaves, 1);
+    setObjTexture(shader, leaves, toggleTexture);
+    setObjMaterial(shader, 0.3f, 0.8f, 0.2f, toggleShadows);
     setObjColor(shader, vec3(0.1882f, 0.27, 0.1607f));
+    setWorldMatrix(shader, treeModelMatrix);
     glDrawElements(GL_TRIANGLES, 360, GL_UNSIGNED_INT, (void*)(330 * sizeof(GLuint)));
+    glBindVertexArray(0);
+    glUseProgram(0);
 
 }
 void drawTrees(mat4 worldMatrix, GLuint treeVAO,  int vertices, int shader, int bark, int leaves) {
@@ -1214,6 +1227,45 @@ void drawTrees(mat4 worldMatrix, GLuint treeVAO,  int vertices, int shader, int 
     drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.35f, -130.0f, -10.0f, bark, leaves);
     drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, -110.0f, -140.0f, bark, leaves);
     drawIndividualTree(worldMatrix, treeVAO, vertices, shader, 0.3f, -140.0f, -120.0f, bark, leaves);
+}
+
+void drawTreeCubic(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor, int trunkTextureID, int leavesTextureID)
+{
+    glBindVertexArray(cubeVao);
+    setMaterial(sceneShaderProgram, 0.4f, 0.8f, 0.1f, 10.0f, toggleShadows);
+
+    float treeHeight = 20.0f * scaleFactor;
+
+    // Trunk
+    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
+    trunkModelMatrix = worldMatrix * trunkModelMatrix;
+    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
+    setWorldMatrix(shader, trunkModelMatrix);
+    setTexture(shader, trunkTextureID, 0, toggleTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    setTexture(shader, leavesTextureID, 0, toggleTexture);
+
+    // Leaf top
+    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
+    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafTopModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf middle
+    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
+    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafMiddleModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf bottom
+    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
+    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafBottomModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 void drawTreesCubic(mat4 worldMatrix, int cubeVao, int shader, int trunkTextureID, int leavesTextureID)

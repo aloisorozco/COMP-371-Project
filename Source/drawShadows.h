@@ -711,6 +711,41 @@ void drawTreesShadow(mat4 worldMatrix, GLuint treeVAO, int vertices, int shader)
     drawIndividualTreeShadow(worldMatrix, treeVAO, vertices, shader, 0.3f, -140.0f, -120.0f);
 }
 
+
+void drawTreeCubicShadow(mat4 worldMatrix, int cubeVao, int shader, float xPosition, float zPosition, float scaleFactor) {
+    glBindVertexArray(cubeVao);
+
+    float treeHeight = 20.0f * scaleFactor;
+
+    // Trunk
+    mat4 trunkModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight, zPosition)) * scale(iMat, glm::vec3(5.0f, 40.0f * scaleFactor, 5.0f));
+    trunkModelMatrix = worldMatrix * trunkModelMatrix;
+    setUniqueColor(shader, 0.447f, 0.231f, 0.086f);
+    setWorldMatrix(shader, trunkModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf top
+    mat4 leafTopModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (25.0f * (scaleFactor / 1.2f)), zPosition)) * scale(iMat, glm::vec3(10.0f, 10.0f, 10.0f));
+    leafTopModelMatrix = worldMatrix * leafTopModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafTopModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf middle
+    mat4 leafMiddleModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight + (10.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(20.0f, 10.0f, 20.0f));
+    leafMiddleModelMatrix = worldMatrix * leafMiddleModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafMiddleModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Leaf bottom
+    mat4 leafBottomModelMatrix = translate(iMat, glm::vec3(xPosition, treeHeight - (5.0f * scaleFactor / 1.2f), zPosition)) * scale(iMat, glm::vec3(30.0f, 10.0f, 30.0f));
+    leafBottomModelMatrix = worldMatrix * leafBottomModelMatrix;
+    setUniqueColor(shader, 0.157f, 0.627f, 0.251f);
+    setWorldMatrix(shader, leafBottomModelMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
 void drawTreesCubicShadow(mat4 worldMatrix, int cubeVao, int shader) {
     drawTreeCubicShadow(worldMatrix, cubeVao, shader, 110.0f, -65.0f, 1.0f);
     drawTreeCubicShadow(worldMatrix, cubeVao, shader, -110.0f, -65.0f, 1.4f);

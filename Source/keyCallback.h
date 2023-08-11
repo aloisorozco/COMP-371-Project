@@ -139,6 +139,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             toggleTexture = 1;
         }
     }
+    // Toggle object files
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+    {
+        toggleObj = !toggleObj;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
     {
         GLuint useDefaultLightLocation = glGetUniformLocation(sceneShaderProgram, "useDefaultLight");
@@ -276,5 +282,6 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
     // Update the projection matrix with the new aspect ratio
     glm::mat4 newProjectionMatrix = glm::perspective(70.0f, aspectRatio, 0.01f, 400.0f);
     setProjectionMatrix(sceneShaderProgram, newProjectionMatrix);
+    setProjectionMatrix(objShaderProgram, newProjectionMatrix);
     setProjectionMatrix(shadowShaderProgram, newProjectionMatrix);
 }

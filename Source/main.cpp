@@ -80,6 +80,7 @@ bool p2Scored;
 // Shader program
 int sceneShaderProgram;
 int shadowShaderProgram;
+int objShaderProgram;
 
 // Toggles
 int toggleTexture = 1;
@@ -90,6 +91,7 @@ bool toggleRadialLight = false;
 bool toggleGrid = false;
 bool useRadialCamera = true;
 bool useCamera1;
+bool toggleObj = true;
 
 // Camera info
 int m = 0;
@@ -190,27 +192,33 @@ void setTexture(int sceneShaderProgram, GLuint textureID, int isBlended, int use
 }
 
 // Setting textures for models in .obj files
-void setObjTexture(int sceneShaderProgram, GLuint textureID, int useTexture)
+void setObjTexture(int objShaderProgram, GLuint textureID, int useTexture)
 {
-    GLuint textureLocation = glGetUniformLocation(sceneShaderProgram, "textureSampler");
+    glUseProgram(objShaderProgram);
+    GLuint textureLocation = glGetUniformLocation(objShaderProgram, "textureSampler");
     glUniform1i(textureLocation, 1);
 
-    GLuint useTextureLocation = glGetUniformLocation(sceneShaderProgram, "useTexture");
+    GLuint useTextureLocation = glGetUniformLocation(objShaderProgram, "useTexture");
     glUniform1i(useTextureLocation, useTexture);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textureID);
+    glUseProgram(0);
 }
 
 // Setting colour for models in .obj files
-void setObjColor(int shaderProgram, vec3 color) {
+void setObjColor(int shaderProgram, vec3 color) 
+{
     glUseProgram(shaderProgram);
     GLuint colorLocation = glGetUniformLocation(shaderProgram, "uniqueColor");
     glUniform3fv(colorLocation, 1, glm::value_ptr(color));
+    glUseProgram(0);
+
 }
 
 // Defining that there is no texture used
-void noTexture(int sceneShaderProgram) {
+void noTexture(int sceneShaderProgram) 
+{
     GLuint useTextureLocation = glGetUniformLocation(sceneShaderProgram, "useTexture");
     glUniform1i(useTextureLocation, 0);
 }
@@ -232,6 +240,23 @@ void setMaterial(int sceneShaderProgram, float ambientLight, float diffuseLight,
     glUniform1f(alphaLocation, specularAlpha);
 
     GLuint useShadowsLocation = glGetUniformLocation(sceneShaderProgram, "useShadows");
+    glUniform1i(useShadowsLocation, useShadows);
+}
+
+// Set the light properties, giving the illusion of a particular material
+void setObjMaterial(int objShaderProgram, float ambientLight, float diffuseLight, float specularLight, int useShadows)
+{
+    glUseProgram(objShaderProgram);
+    GLuint ambientLightLocation = glGetUniformLocation(objShaderProgram, "shading_ambient_strength");
+    glUniform1f(ambientLightLocation, ambientLight);
+
+    GLuint diffuseLightLocation = glGetUniformLocation(objShaderProgram, "shading_diffuse_strength");
+    glUniform1f(diffuseLightLocation, diffuseLight);
+
+    GLuint specularLightLocation = glGetUniformLocation(objShaderProgram, "shading_specular_strength");
+    glUniform1f(specularLightLocation, specularLight);
+
+    GLuint useShadowsLocation = glGetUniformLocation(objShaderProgram, "useShadows");
     glUniform1i(useShadowsLocation, useShadows);
 }
 
@@ -338,6 +363,8 @@ int main(int argc, char* argv[])
     GLuint metalTextureID = loadTexture("../Assets/Textures/metal.jpg");
     GLuint moonTextureID = loadTexture("../Assets/Textures/moon.jpg");
     GLuint sunTextureID = loadTexture("../Assets/Textures/sun.jpg");
+    GLuint leavesCubicTextureID = loadTexture("../Assets/Textures/leaves.jpg");
+    GLuint trunkCubicTextureID = loadTexture("../Assets/Textures/trunk.jpg");
     GLuint leafTextureID = loadTexture("../Assets/Textures/leaves3.jpg");
     GLuint barkTextureID = loadTexture("../Assets/Textures/bark2.jpg");
 #endif
@@ -448,6 +475,7 @@ int main(int argc, char* argv[])
 
     setProjectionMatrix(sceneShaderProgram, projectionMatrix);
     setProjectionMatrix(objShaderProgram, projectionMatrix);
+    
     // --- CREATING VAOs ---
     // Creation of the vertex array objects
     int gridVao = createVertexArrayObject(gridArray, sizeof(gridArray));
@@ -494,6 +522,8 @@ int main(int argc, char* argv[])
         glm::mat4 scaleMatrix = glm::scale(iMat, glm::vec3(0.4f, 0.4f, 0.4f));
         worldMatrix = rotationXMatrix * rotationYMatrix * scaleMatrix;
 
+        glUseProgram(sceneShaderProgram);
+
         if (useRadialCamera) {
             // Set initial view matrix for shader when using camera
             viewMatrix = glm::lookAt(radialCameraPosition,    // eye
@@ -501,9 +531,13 @@ int main(int argc, char* argv[])
                 cameraUp);                              // up
 
             setViewMatrix(sceneShaderProgram, viewMatrix);
+            setViewMatrix(objShaderProgram, viewMatrix);
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
+            glUseProgram(0);
+            glUseProgram(objShaderProgram);
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
             glUseProgram(0);
 
             glm::mat4 cameraRotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(dt * 1.8f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -516,12 +550,12 @@ int main(int argc, char* argv[])
                 cameraUp);                              // up
 
             setViewMatrix(sceneShaderProgram, viewMatrix);
+            setViewMatrix(objShaderProgram, viewMatrix);
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(cameraPosition1));
             glUseProgram(objShaderProgram);
-            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(radialCameraPosition));
-            glUseProgram(0);
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(cameraPosition1));
         }
         else {
             // Set initial view matrix for shader when using radialCamera
@@ -530,12 +564,12 @@ int main(int argc, char* argv[])
                 cameraUp);                                        // up
 
             setViewMatrix(sceneShaderProgram, viewMatrix);
+            setViewMatrix(objShaderProgram, viewMatrix);
 
             glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "view_position"), 1, value_ptr(cameraPosition));
             glUseProgram(objShaderProgram);
             glUniform3fv(glGetUniformLocation(objShaderProgram, "view_position"), 1, value_ptr(cameraPosition));
-            glUseProgram(0);
         }
 
         // Initialize particles
@@ -544,7 +578,6 @@ int main(int argc, char* argv[])
         }
 
         // Light rotation calculations
-        glUseProgram(sceneShaderProgram);
         rotationAngle += dt * 0.2f;
         float sunDistance = 160.0f;  // Adjust this value to set the desired distance
         float sunX = sunDistance * cos(rotationAngle);
@@ -552,9 +585,11 @@ int main(int argc, char* argv[])
         float moonX = sunDistance * cos(rotationAngle + (float)(M_PI));
         float moonY = sunDistance * sin(rotationAngle + (float)(M_PI));
 
-        glUseProgram(objShaderProgram);
-        glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(vec3(1.0f, 1.0f, 1.0f)));
+
         // Rotating the light
+        glUseProgram(objShaderProgram);
+        GLuint lightObjIntensityLocation = glGetUniformLocation(objShaderProgram, "light_color");
+        glUseProgram(sceneShaderProgram);
         GLuint lightIntensityLocation = glGetUniformLocation(sceneShaderProgram, "light_color");
         if (rotationAngle > 2 * (float)(M_PI))
         {
@@ -580,19 +615,26 @@ int main(int argc, char* argv[])
         if (rotationAngle > (float)(M_PI)) {
             toggleDefaultLight = false;
             light_intensity = vec3(clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f), clamp(-sin(rotationAngle), 0.0f, 0.2f));
+            glUseProgram(sceneShaderProgram);
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(-sin(rotationAngle))));
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);
+
+            glUseProgram(objShaderProgram);
+            glUniform3fv(lightObjIntensityLocation, 1, value_ptr(light_intensity));
         }
         else {
             vec3 day_vector = vec3(sin(rotationAngle));
             light_intensity = vec3(clamp(sin(rotationAngle) * 1.4f, 0.0f, 1.0f), sin(rotationAngle), sin(rotationAngle));
 
             toggleDefaultLight = true;
+            glUseProgram(sceneShaderProgram);
             glUniform3fv(lightIntensityLocation, 1, value_ptr(light_intensity));
-
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "day_vector"), 1, value_ptr(vec3(sin(rotationAngle))));
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), true);
+
+            glUseProgram(objShaderProgram);
+            glUniform3fv(lightObjIntensityLocation, 1, value_ptr(light_intensity));
         }
 
         // Create sun matrix with translation and rotation
@@ -621,32 +663,35 @@ int main(int argc, char* argv[])
         // Light matrices
         if (toggleDefaultLight) {
             lightViewMatrix = glm::lookAt(lightPositionSun, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
+            glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_position"), 1, value_ptr(lightPositionSun));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "light_direction"), 1, value_ptr(lightDirection));
+
             glUseProgram(objShaderProgram);
             glUniform3fv(glGetUniformLocation(objShaderProgram, "light_position"), 1, value_ptr(lightPositionSun));
             glUniform3fv(glGetUniformLocation(objShaderProgram, "light_direction"), 1, value_ptr(lightDirection));
-            glUseProgram(sceneShaderProgram);
         }
         else {
             lightViewMatrix = glm::lookAt(lightPositionMoon, lightFocus, glm::vec3(0.0f, 1.0f, 0.0f));
+            glUseProgram(sceneShaderProgram);
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "moon_position"), 1, value_ptr(lightPositionMoon));
             glUniform3fv(glGetUniformLocation(sceneShaderProgram, "moon_direction"), 1, value_ptr(moonDirection));
+
             glUseProgram(objShaderProgram);
-            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_position"), 1, value_ptr(lightPositionMoon));
-            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_direction"), 1, value_ptr(moonDirection));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "moon_position"), 1, value_ptr(lightPositionMoon));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "moon_direction"), 1, value_ptr(moonDirection));
         }
         glUseProgram(sceneShaderProgram);
         glUniformMatrix4fv(glGetUniformLocation(sceneShaderProgram, "light_proj_view_matrix"), 1, GL_FALSE, &(lightProjMatrix* lightViewMatrix)[0][0]);
         glUniform1i(glGetUniformLocation(sceneShaderProgram, "light_near_plane"), lightNearPlane);
         glUniform1i(glGetUniformLocation(sceneShaderProgram, "light_far_plane"), lightFarPlane);
         glUniformMatrix4fv(glGetUniformLocation(sceneShaderProgram, "worldMatrix"), 1, GL_FALSE, &worldMatrix[0][0]);
-
         glUseProgram(objShaderProgram);
         glUniformMatrix4fv(glGetUniformLocation(objShaderProgram, "light_proj_view_matrix"), 1, GL_FALSE, &(lightProjMatrix* lightViewMatrix)[0][0]);
         glUniform1i(glGetUniformLocation(objShaderProgram, "light_near_plane"), lightNearPlane);
         glUniform1i(glGetUniformLocation(objShaderProgram, "light_far_plane"), lightFarPlane);
         glUniformMatrix4fv(glGetUniformLocation(objShaderProgram, "worldMatrix"), 1, GL_FALSE, &worldMatrix[0][0]);
+
 
         // Light parameters for spotlights
         vec3 light_position = glm::vec3(80.0f, 80.0f, 60.0f); // the location of the light in 3D space: fixed position
@@ -721,20 +766,24 @@ int main(int argc, char* argv[])
         drawCourtShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Stadium
         drawStadiumShadow(worldMatrix, cubeVao, shadowShaderProgram);
-        // Trees
-        drawTreesCubicShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Scoreboard
         drawScoreboardShadow(worldMatrix, cubeVao, shadowShaderProgram);
         // Net
         drawNetShadow(worldMatrix, netGridVao, cubeVao, shadowShaderProgram);
         // Sphere
         drawSphereShadow(worldMatrix, sphereVao, shadowShaderProgram, indices);
-        //Crowd
-         drawCrowdShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
-        // Ball boys
-        drawBallBoyShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
-        // Trees
-        drawTreesShadow(worldMatrix, treeVAO, treeVertices, shadowShaderProgram);
+        if (toggleObj) {
+            //Crowd
+            drawCrowdShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
+            // Ball boys
+            drawBallBoyShadows(worldMatrix, modelVAO, modelVertices, shadowShaderProgram);
+            // Trees
+            drawTreesShadow(worldMatrix, treeVAO, treeVertices, shadowShaderProgram);
+        }
+        else {
+            // Trees
+            drawTreesCubicShadow(worldMatrix, cubeVao, shadowShaderProgram);
+        }
         glBindVertexArray(0);
 
 
@@ -774,8 +823,6 @@ int main(int argc, char* argv[])
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
         drawStadium(worldMatrix, cubeVao, cubeVaoRepeat, sceneShaderProgram, standTextureID, wallTextureID);
-        // Trees
-        //drawTreesCubic(worldMatrix, cubeVao, sceneShaderProgram, trunkTextureID, leavesTextureID);
         // Scoreboard
         drawScoreboard(worldMatrix, cubeVao, sceneShaderProgram, woodTextureID);
         // Lights
@@ -790,15 +837,19 @@ int main(int argc, char* argv[])
         drawModel(worldMatrix, racketColor1, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition1, upArmXAngle1, 0);
         // Model 2
         drawModel(worldMatrix, racketColor2, racketTextureID, racketGridVao, cubeVao, sceneShaderProgram, racketPosition2, upArmXAngle2, 1);
-        // Temperatures
-
-        glUseProgram(objShaderProgram);
-        // Crowd
-        drawCrowd(worldMatrix, modelVAO, modelVertices, objShaderProgram);
-        //// Ball Boys
-        drawBallBoys(worldMatrix, modelVAO, modelVertices, objShaderProgram);
-        //Trees
-        drawTrees(worldMatrix, treeVAO,  treeVertices, objShaderProgram, barkTextureID, leafTextureID);
+        
+        if (toggleObj) {
+            // Crowd
+            drawCrowd(worldMatrix, modelVAO, modelVertices, objShaderProgram);
+            // Ball Boys
+            drawBallBoys(worldMatrix, modelVAO, modelVertices, objShaderProgram);
+            //Trees
+            drawTrees(worldMatrix, treeVAO, treeVertices, objShaderProgram, barkTextureID, leafTextureID);
+        }
+        else {
+            // Trees
+            drawTreesCubic(worldMatrix, cubeVao, sceneShaderProgram, trunkCubicTextureID, leavesCubicTextureID);
+        }
         // Unbind geometry
         glBindVertexArray(0);
 
@@ -934,6 +985,7 @@ int main(int argc, char* argv[])
         glm::mat4 viewMatrix = lookAt(cameraPosition, cameraPosition + cameraLookAt, cameraUp);
 
         setViewMatrix(sceneShaderProgram, viewMatrix);
+        setViewMatrix(objShaderProgram, viewMatrix);
     }
 
     SoundEngine->drop();
