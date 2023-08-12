@@ -141,6 +141,10 @@ ISoundSource* cheerSource;
 ISoundSource* gameOverSimSource;
 ISoundSource* gameOverSource;
 ISoundSource* winSource;
+ISoundSource* netSource;
+ISoundSource* ballGroundSource;
+ISoundSource* hardSource;
+ISoundSource* easySource;
 
 
 // Setting projection matrix depending on shader program
@@ -324,6 +328,10 @@ int main(int argc, char* argv[])
     gameOverSimSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/gameoverSim.mp3");
     gameOverSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/gameover.mp3");
     winSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/win.mp3");
+    netSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/net.mp3");
+    ballGroundSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/ballGround.mp3");
+    hardSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/hard.mp3");
+    easySource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/easy.mp3");
 
     // Setting volumes
     musicSource->setDefaultVolume(0.2f);
@@ -334,6 +342,10 @@ int main(int argc, char* argv[])
     gameOverSource->setDefaultVolume(0.5f);
     gameOverSimSource->setDefaultVolume(0.5f);
     winSource->setDefaultVolume(0.5f);
+    netSource->setDefaultVolume(0.1f);
+    ballGroundSource->setDefaultVolume(0.3f);
+    easySource->setDefaultVolume(0.5f);
+    hardSource->setDefaultVolume(0.5f);
 
 
     // Start background music

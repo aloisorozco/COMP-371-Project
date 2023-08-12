@@ -100,6 +100,10 @@ extern ISoundSource* cheerSource;
 extern ISoundSource* gameOverSimSource;
 extern ISoundSource* gameOverSource;
 extern ISoundSource* winSource;
+extern ISoundSource* netSource;
+extern ISoundSource* ballGroundSource;
+extern ISoundSource* hardSource;
+extern ISoundSource* easySource;
 
 // --- Global functions --- 
 extern void setWorldMatrix(int shaderProgram, glm::mat4 worldMatrix);
