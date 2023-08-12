@@ -317,7 +317,13 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court line right
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+    if (isHardMode) {
+        setUniqueColor(sceneShaderProgram, 0.1f, 0.1f, 0.1f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
+    }
+    
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court line left model matrix
@@ -327,7 +333,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court line left
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court line outer right model matrix
@@ -337,7 +342,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court line right outer
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court line left outer model matrix
@@ -347,7 +351,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court line left outer
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court very bottom line model matrix
@@ -357,7 +360,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court very bottom line
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court very top line model matrix
@@ -367,7 +369,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court very top line
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court close bottom line model matrix
@@ -377,7 +378,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court close bottom line
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court close top line model matrix
@@ -387,7 +387,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court close top line
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court middle line model matrix
@@ -397,7 +396,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the court middle line
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court line small middle close
@@ -407,7 +405,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the Court line small middle
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court line small middle far
@@ -417,7 +414,6 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
 
     // Drawing the Court line small middle
     setMaterial(sceneShaderProgram, 0.3f, 0.6f, 0.1f, 10.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Court base model matrix
@@ -430,13 +426,15 @@ void drawCourt(glm::mat4 worldMatrix, int clayTextureID, int grassTextureID, int
     setUniqueColor(sceneShaderProgram, 0.8f, 0.4f, 0.2f);
 
     // Drawing the court base
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    if (!isHardMode) {
+       //glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
     glBindVertexArray(0);
 
 
     glBindVertexArray(cubeVaoRepeat);
     // Court ground model matrix
-    glm::mat4 courtGroundModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -1.5f, 0.0f)) * glm::scale(iMat, glm::vec3(100.0f, 0.5f, 120.0f));
+    glm::mat4 courtGroundModelMatrix = glm::translate(iMat, glm::vec3(0.0f, -1.2f, 0.0f)) * glm::scale(iMat, glm::vec3(100.0f, 0.5f, 120.0f));
     courtGroundModelMatrix = worldMatrix * courtGroundModelMatrix;
     setWorldMatrix(sceneShaderProgram, courtGroundModelMatrix);
 
@@ -477,7 +475,13 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
 
     // Drawing the net right post
     setMaterial(sceneShaderProgram, 0.3f, 0.3f, 1.0f, 20.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 0.161f, 0.396f, 0.0235f);
+    if (isHardMode) {
+        setUniqueColor(sceneShaderProgram, 1.0f, 0.0f, 0.0f);
+    }
+    else {
+        setUniqueColor(sceneShaderProgram, 0.161f, 0.396f, 0.0235f);
+    }
+    
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net left post model matrix
@@ -487,7 +491,6 @@ void drawNet(glm::mat4 worldMatrix, int netGridVao, int cubeVao, int sceneShader
 
     // Drawing the net left post
     setMaterial(sceneShaderProgram, 0.3f, 0.3f, 1.0f, 20.0f, toggleShadows);
-    setUniqueColor(sceneShaderProgram, 0.161f, 0.396f, 0.0235f);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Net top model matrix

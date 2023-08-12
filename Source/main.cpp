@@ -367,6 +367,8 @@ int main(int argc, char* argv[])
     GLuint trunkCubicTextureID = loadTexture("../Assets/Textures/trunk.jpg");
     GLuint leafTextureID = loadTexture("../Assets/Textures/leaves3.jpg");
     GLuint barkTextureID = loadTexture("../Assets/Textures/bark2.jpg");
+    GLuint magmaTextureID = loadTexture("../Assets/Textures/magma.jpg");
+    GLuint fireTextureID = loadTexture("../Assets/Textures/fire.jpg");
 #endif
 
     // Compiling and linking shaders here
@@ -580,7 +582,7 @@ int main(int argc, char* argv[])
         }
 
         // Light rotation calculations
-        rotationAngle += dt * 0.2f;
+        rotationAngle += dt * 0.05f;
         float sunDistance = 160.0f;  // Adjust this value to set the desired distance
         float sunX = sunDistance * cos(rotationAngle);
         float sunY = sunDistance * sin(rotationAngle);
@@ -821,7 +823,7 @@ int main(int argc, char* argv[])
             drawSkyBox(worldMatrix, sceneShaderProgram, sphereVao, starsTextureID, indices);
         }
         // Court
-        drawCourt(worldMatrix, clayTextureID, grassTextureID, cubeVao, cubeVaoRepeat, sceneShaderProgram);
+        drawCourt(worldMatrix, clayTextureID, isHardMode ? magmaTextureID : grassTextureID, cubeVao, cubeVaoRepeat, sceneShaderProgram);
         // Net
         drawNet(worldMatrix, netGridVao, cubeVao, sceneShaderProgram);
         // Stadium
@@ -847,7 +849,7 @@ int main(int argc, char* argv[])
             // Ball Boys
             drawBallBoys(worldMatrix, modelVAO, modelVertices, objShaderProgram);
             //Trees
-            drawTrees(worldMatrix, treeVAO, treeVertices, objShaderProgram, barkTextureID, leafTextureID);
+            drawTrees(worldMatrix, treeVAO, treeVertices, objShaderProgram, barkTextureID, isHardMode ? fireTextureID :leafTextureID);
         }
         else {
             // Trees
