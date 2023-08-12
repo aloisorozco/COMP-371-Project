@@ -124,3 +124,4 @@ extern void setBlend(int sceneShaderProgram, float alphaBlending);
 extern void score(bool p1Scored, bool p2Scored);
 extern void resetScore();
 extern void startPoint();
+extern void resetTennisBallPosition();
