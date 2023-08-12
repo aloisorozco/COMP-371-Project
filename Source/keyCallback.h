@@ -273,11 +273,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         {
             if(isHardMode){
                 botSpeed = 0.3f;
+                botHitNetRate = 7;
+                racketWidth = 3.0f;
                 isHardMode = false;
                 SoundEngine->play2D(easySource, false);
             }
             else{
                 botSpeed = 0.3f;
+                botHitNetRate = 10;
+                racketWidth = 3.5f;
                 isHardMode = true;
                 SoundEngine->play2D(hardSource, false);
             }
