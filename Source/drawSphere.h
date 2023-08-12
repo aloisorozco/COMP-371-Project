@@ -19,6 +19,7 @@ using namespace glm;
 
 float sphereRadius;
 float racketWidth = 3.0f;
+bool hitNetFirst;
 
 float finalBallPosition(vec3 sphereVelocity, vec3 spherePosition);
 void setPositionX1(float xValue);
@@ -137,6 +138,7 @@ float ballX = spherePosition.x;
 void startPoint() {
     canStartRacketAnimation = true;
     canStartPoint = false;
+    hitNetFirst = true;
     racketHitCount = 0;
     if (isP1sTurnToServe) {
         isBotReceive = true;
@@ -387,6 +389,10 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
 
     if (didHitNet()) {
         sphereVelocity = vec3(0, sphereVelocity.y, 0);
+        if (hitNetFirst) {
+            SoundEngine->play2D(netSource, false);
+            hitNetFirst = false;
+        }
         isHittingNet = true;
     }
     else if (didCrossNet() ) {
@@ -396,6 +402,7 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
     if (didHitCourt()) {
         if (!isHittingNet) {
             sphereVelocity.y = 1.0f;
+            SoundEngine->play2D(ballGroundSource, false);
         }
         else {
             if (sphereBounceAfterHittingNetCount > 7) {
@@ -408,11 +415,13 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
                     isSecondServe = true;
                 }
                 
+                SoundEngine->play2D(ballGroundSource, false);
                 resetTennisBallPosition();
             }
             else {
                 sphereVelocity.y = -0.75f * sphereVelocity.y;
                 sphereBounceAfterHittingNetCount++;
+                SoundEngine->play2D(ballGroundSource, false);
             }
         }
     }
