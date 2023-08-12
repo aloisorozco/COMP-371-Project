@@ -73,6 +73,8 @@ float wristXAngle = 0.0f;
 float wristYAngle = 0.0f;
 float wristZAngle = 0.0f;
 
+float lasttime;
+
 // Score count
 bool p1Scored;
 bool p2Scored;
@@ -277,6 +279,7 @@ void setPositionX1(float xValue) {
 void setPositionX2(float xValue) {
     racketPosition2.x = xValue;
 }
+
 
 // Main function
 int main(int argc, char* argv[])
@@ -527,6 +530,9 @@ int main(int argc, char* argv[])
         float dt = glfwGetTime() - lastFrameTime;
         lastFrameTime += dt;
 
+        
+        
+
         // Each frame, reset color and depth of each pixel to glClearColor and glClearDepth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -594,7 +600,7 @@ int main(int argc, char* argv[])
         }
 
         // Light rotation calculations
-        rotationAngle += dt * 0.05f;
+        rotationAngle += dt * 0.2f;
         float sunDistance = 160.0f;  // Adjust this value to set the desired distance
         float sunX = sunDistance * cos(rotationAngle);
         float sunY = sunDistance * sin(rotationAngle);

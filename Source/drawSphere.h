@@ -227,7 +227,7 @@ bool didHitNet() {
 }
 
 bool isOffCourt() {
-    return abs(spherePosition.z) > 40.0f;
+    return abs(spherePosition.z) > 100.0f;
 }
 
 void updateSphereVelocity() {
@@ -286,7 +286,14 @@ void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
         if (playerRacketIndex == 0 && isBotReceive) {
             int left = ((int)(distanceLeft) == 0 ? 0 : rand() % ((int)(distanceLeft) * 10));
             int right = ((int)(distanceRight) == 0 ? 0 : rand() % ((int)(distanceRight) * 10));
-            randNum = multiplier * left + -multiplier * right;
+            //randNum = multiplier * left + -multiplier * right;
+
+            if (distanceFromBall < 0) {
+                randNum = multiplier * left;
+            }
+            else {
+                randNum = -multiplier * right;
+            }
 
             if ((rand() % botHitNetRate) < botHitNetRate-1) {
                 sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);

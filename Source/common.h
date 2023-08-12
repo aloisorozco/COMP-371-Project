@@ -47,6 +47,8 @@ extern int racketDirectionMultiplier;
 extern float racketDirectionAngle;
 extern int botRacketDirectionMultiplier;
 extern float botRacketDirectionAngle;
+extern int botHitNetRate;
+
 
 extern glm::mat4 iMat;
 
@@ -64,6 +66,7 @@ extern bool isSimulation;
 extern bool useCamera1;
 extern bool toggleObj;
 extern bool isHardMode;
+extern float racketWidth;
 
 extern int sceneShaderProgram;
 extern int objShaderProgram;
