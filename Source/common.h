@@ -63,6 +63,7 @@ extern bool useRadialCamera;
 extern bool isSimulation;
 extern bool useCamera1;
 extern bool toggleObj;
+extern bool isHardMode;
 
 extern int sceneShaderProgram;
 extern int objShaderProgram;
