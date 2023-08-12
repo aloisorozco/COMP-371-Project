@@ -621,7 +621,7 @@ int main(int argc, char* argv[])
 
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), false);  
             glUseProgram(objShaderProgram);
-            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.2f, 1.0f)));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.6f, 1.0f)));
             glUseProgram(sceneShaderProgram);
         }
         else {
@@ -635,7 +635,7 @@ int main(int argc, char* argv[])
             glUniform1i(glGetUniformLocation(sceneShaderProgram, "useDefaultLight"), true);
 
             glUseProgram(objShaderProgram);
-            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.2f, 1.0f)));
+            glUniform3fv(glGetUniformLocation(objShaderProgram, "light_color"), 1, value_ptr(clamp(light_intensity, 0.6f, 1.0f)));
             glUseProgram(sceneShaderProgram);
         }
 
@@ -961,7 +961,8 @@ int main(int argc, char* argv[])
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
             if (!isSimulation) {
-                setPositionX2(racketPosition2.x - 0.5f);
+                
+                setPositionX2(clamp(racketPosition2.x - 0.5f, -24.0f, 24.0f));
 
                 if (spherePosition.z < -0.1f || sphereVelocity.z < 0.0f) {
                     racketDirectionMultiplier = -1;
@@ -974,7 +975,7 @@ int main(int argc, char* argv[])
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
             if (!isSimulation) {
-                setPositionX2(racketPosition2.x + 0.5f);
+                setPositionX2(clamp(racketPosition2.x + 0.5f, -24.0f, 24.0f));
 
                 if (spherePosition.z < -0.1f || sphereVelocity.z < 0.0f) {
                     racketDirectionMultiplier = 1;

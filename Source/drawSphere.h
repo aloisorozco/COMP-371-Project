@@ -25,6 +25,7 @@ void setPositionX1(float xValue);
 void setPositionX2(float xValue);
 void updateBotPosition(float ballX, vec3 racketPosition);
 void updatePlayerPosition(float ballX, vec3 racketPosition);
+void updateBotPositionMiddle(vec3 position);
 
 
 // Function to generate vertices for the sphere
@@ -122,11 +123,14 @@ bool isHittingNet = false;
 bool isSecondServe = false;
 bool isBotReceive = true;
 bool isServe = true;
+bool isHardMode = false;
 bool isSimulation = false;
 
 int racketHitCount = 0;
 int sphereBounceAfterHittingNetCount = 0;
 int sphereRandomNumberRange = 5;
+int botHitNetRate = 11;
+int serveHitNetRate = 11;
 
 float ballX = spherePosition.x;
 
@@ -231,53 +235,68 @@ void updateSphereVelocity() {
 void updateSphereWhenHitByRacketBot(vec3 racketPosition, float ballX) {
     float sphereVelocityZ = (playerRacketIndex == 0 ? 1.0f : -1.0f);
     float sphereVelocityX = (playerRacketIndex == 0 ? 0.25f : -0.25f);
+    float sphereVelocityYZero = 0.0f;
     float multiplier = (playerRacketIndex == 0 ? -0.1 : 0.1f);
 
-    float bottomLeftCorner = -20.0f;
-    float bottomRightCorner = 20.0f;
+    float bottomLeftCorner = -18.0f;
+    float bottomRightCorner = 18.0f;
 
+    float distanceFromBall = racketPosition.x - ballX;
     float distanceLeft = (playerRacketIndex == 0 ? bottomLeftCorner - racketPosition.x : bottomRightCorner - racketPosition.x);
     float distanceRight = (playerRacketIndex == 0 ? bottomRightCorner - racketPosition.x : bottomLeftCorner - racketPosition.x);
     
     float randNum = 0.0f;
-
     if (isServe) {
-        if (rand() % 7 < 6) {
+        if (rand() % serveHitNetRate < serveHitNetRate - 1) {
             sphereVelocity = vec3(sphereVelocityX, sphereInitialYVelocity, sphereVelocityZ);
         }
         else {
             sphereVelocity = vec3(sphereVelocityX, 0.0f, sphereVelocityZ);
         }
-        
     }
-    else if (rand() % 10 < 9){
-        if (racketPosition.x - ballX < 0) {
-            randNum = multiplier * (rand() % ((int)(distanceLeft) * 10));
+    else if(isSimulation){
+        if (distanceFromBall < 0) {
+            int left = ((int)(distanceLeft) == 0 ? 0 : rand() % ((int)(distanceLeft) * 10));
+            randNum = multiplier * left;
         }
         else {
-            randNum = (-multiplier * (rand() % ((int)(distanceRight) * 10)));
+            int right = ((int)(distanceRight) == 0 ? 0 : rand() % ((int)(distanceRight) * 10));
+            randNum = -multiplier * right;
         }
-        
-        sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+
+        if(rand() % botHitNetRate < botHitNetRate - 1){
+            sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+        }
+        else {
+            sphereVelocity = vec3(randNum / 64, sphereVelocityYZero, sphereVelocityZ);   
+        }   
     }
     else {
-        randNum = multiplier * (rand() % ((int)(distanceLeft) * 10)) + (-multiplier * (rand() % ((int)(distanceRight) * 10)));
-        if (!isSimulation) {
-            if (playerRacketIndex == 0 && isBotReceive) {
-                sphereVelocity = vec3(randNum / 64, 0.0f, sphereVelocityZ);
+        if (distanceFromBall < 0 && !isBotReceive) {
+            randNum = (abs(distanceFromBall) * distanceLeft) / racketWidth;
+            //randNum = multiplier * (rand() % ((int)(distanceLeft) * 10));
+        }
+        else {
+            randNum = (abs(distanceFromBall) * distanceRight) / racketWidth;
+            //randNum = (-multiplier * (rand() % ((int)(distanceRight) * 10)));
+        }
+
+        if (playerRacketIndex == 0 && isBotReceive) {
+            int left = ((int)(distanceLeft) == 0 ? 0 : rand() % ((int)(distanceLeft) * 10));
+            int right = ((int)(distanceRight) == 0 ? 0 : rand() % ((int)(distanceRight) * 10));
+            randNum = multiplier * left + -multiplier * right;
+
+            if ((rand() % botHitNetRate) < botHitNetRate-1) {
+                sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
             }
             else {
-                sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+                sphereVelocity = vec3(randNum / 64, sphereVelocityYZero, sphereVelocityZ);
             }
         }
         else {
-            sphereVelocity = vec3(randNum / 64, 0.0f, sphereVelocityZ);
-        }
-        
-        
-        
+            sphereVelocity = vec3(randNum / 64, sphereInitialYVelocity, sphereVelocityZ);
+        } 
     }
-    
     sphereRotationIncrement = -sphereRotationIncrement;
     racketHitCount++;
 }
@@ -313,8 +332,15 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             isBotReceive = true;
             ballX = finalBallPosition(sphereVelocity, spherePosition);
             SoundEngine->play2D(hitSource, false);
+
+            /*cout << " ____  value:";
+            cout << spherePosition.y;
+            cout << " \n ";*/
         }
         else {
+            /*cout << " ____ Y value:";
+            cout << spherePosition.y;
+            cout << " \n ";*/
             isBotReceive = false;  
             SoundEngine->play2D(hitSource, false);
         }
@@ -326,7 +352,6 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             playerRacketIndex = 0;
         }
     }
-
     if (isSimulation && !isServe) {
         if (playerRacketIndex == 0 && isBotReceive) {
             updateBotPosition(ballX, racketPosition1);
@@ -337,6 +362,10 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
     }
     else if (playerRacketIndex == 0 && isBotReceive) {
         updateBotPosition(ballX, racketPosition1);
+    }
+    
+    if(isHardMode && !isBotReceive && !isServe) {
+        updateBotPositionMiddle(racketPosition1);
     }
     
 
@@ -369,7 +398,7 @@ void updateSpherePosition(vec3 racketPosition1, vec3 racketPosition2) {
             sphereVelocity.y = 1.0f;
         }
         else {
-            if (sphereBounceAfterHittingNetCount > 8) {
+            if (sphereBounceAfterHittingNetCount > 7) {
                 bool didP1Score = spherePosition.z < 0.0f;
                 if (racketHitCount > 1 || isSecondServe) {
                     score(didP1Score, !didP1Score);

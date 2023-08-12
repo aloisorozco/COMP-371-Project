@@ -267,6 +267,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 startPoint();
             }
         }
+        if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+        {
+            if(isHardMode){
+                botSpeed = 0.3f;
+                isHardMode = false;
+            }
+            else{
+                botSpeed = 0.3f;
+                isHardMode = true;
+            }
+        }
      }
 }
 

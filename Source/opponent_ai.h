@@ -27,7 +27,7 @@ void updateBotPosition(float BallX, vec3 position) {
 			botRacketDirectionAngle = 180.0f;
 		}
 	}
-	else if (BallX >= position.x + 1.0f) {
+	else if (BallX > position.x + 1.0f) {
 		setPositionX1(position.x + botSpeed);
 
 		if (spherePosition.z > 0.1f || sphereVelocity.z > 0.0f) {
@@ -55,12 +55,40 @@ void updatePlayerPosition(float BallX, vec3 position) {
 			racketDirectionAngle = 180.0f;
 		}
 	}
-	else if (BallX >= position.x + 1.0f) {
+	else if (BallX > position.x + 1.0f) {
 		setPositionX2(position.x + botSpeed);
 
 		if (spherePosition.z > 0.1f || sphereVelocity.z > 0.0f) {
 			racketDirectionMultiplier = 1;
 			racketDirectionAngle = 0.0f;
+		}
+	}
+
+	if (posCounter == 200) {
+		SoundEngine->play2D(shoeSource, false);
+	}
+	else if (posCounter == 400) {
+		SoundEngine->play2D(shoe2Source, false);
+	}
+	posCounter = (posCounter + 1) % 500;
+}
+
+void updateBotPositionMiddle( vec3 position) {
+
+	if (position.x - 1.0f >= 0) {
+		setPositionX1(position.x - (botSpeed/2));
+
+		if (spherePosition.z > 0.1f || sphereVelocity.z > 0.0f) {
+			botRacketDirectionMultiplier = -1;
+			botRacketDirectionAngle = 180.0f;
+		}
+	}
+	else if (position.x + 1.0f < 0) {
+		setPositionX1(position.x + (botSpeed/2));
+
+		if (spherePosition.z > 0.1f || sphereVelocity.z > 0.0f) {
+			botRacketDirectionMultiplier = 1;
+			botRacketDirectionAngle = 0.0f;
 		}
 	}
 
