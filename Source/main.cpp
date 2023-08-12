@@ -145,6 +145,7 @@ ISoundSource* netSource;
 ISoundSource* ballGroundSource;
 ISoundSource* hardSource;
 ISoundSource* easySource;
+ISoundSource* whistleSource;
 
 
 // Setting projection matrix depending on shader program
@@ -332,6 +333,7 @@ int main(int argc, char* argv[])
     ballGroundSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/ballGround.mp3");
     hardSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/hard.mp3");
     easySource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/easy.mp3");
+    whistleSource = SoundEngine->addSoundSourceFromFile("../Assets/Audio/whistle.mp3");
 
     // Setting volumes
     musicSource->setDefaultVolume(0.2f);
@@ -344,8 +346,9 @@ int main(int argc, char* argv[])
     winSource->setDefaultVolume(0.5f);
     netSource->setDefaultVolume(0.1f);
     ballGroundSource->setDefaultVolume(0.3f);
-    easySource->setDefaultVolume(0.5f);
-    hardSource->setDefaultVolume(0.5f);
+    easySource->setDefaultVolume(0.4f);
+    hardSource->setDefaultVolume(0.4f);
+    whistleSource->setDefaultVolume(0.2f);
 
 
     // Start background music

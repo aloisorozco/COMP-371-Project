@@ -104,6 +104,8 @@ extern ISoundSource* netSource;
 extern ISoundSource* ballGroundSource;
 extern ISoundSource* hardSource;
 extern ISoundSource* easySource;
+extern ISoundSource* whistleSource;
+
 
 // --- Global functions --- 
 extern void setWorldMatrix(int shaderProgram, glm::mat4 worldMatrix);

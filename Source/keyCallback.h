@@ -258,11 +258,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             if(isSimulation){
                 botSpeed = 0.3f;
                 isSimulation = false;
+                SoundEngine->play2D(whistleSource, false);
                 resetScore();
             }
             else{
                 botSpeed = 0.4f;
                 isSimulation = true;
+                SoundEngine->play2D(whistleSource, false);
                 resetScore();
                 startPoint();
             }
